@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,17 +11,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useVerifyLoginMutation } from "@/lib/redux/api/auth/authApi";
-import { setUser, TDecodedToken, TUser } from "@/lib/redux/features/authSlice";
+import { setUser, TUser } from "@/lib/redux/features/authSlice";
 import { useAppDispatch } from "@/lib/redux/hooks";
+import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { jwtDecode } from "jwt-decode";
 
 const VerifyOtpPage = () => {
   const email = localStorage.getItem("userEmail");
   const [verifyLogin] = useVerifyLoginMutation();
   const dispatch = useAppDispatch();
-  const router = useRouter()
+  const router = useRouter();
 
   const handleOTP = async (e: any) => {
     e.preventDefault();
@@ -35,17 +36,15 @@ const VerifyOtpPage = () => {
       const res = await verifyLogin(verifyInfo).unwrap();
       const user = jwtDecode(res.token) as TUser;
 
-      dispatch(setUser({  user: user, token: res.token }));
+      dispatch(setUser({ user: user, token: res.token }));
       toast.success("Login Successful", { id: toastId, duration: 2000 });
       router.push("/");
       localStorage.removeItem("userEmail");
-
-
-    } catch (error:any) {
-      toast.error(error?.data?.message || "Something went wrong", { id: toastId });
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Something went wrong", {
+        id: toastId,
+      });
     }
-
-
   };
 
   return (

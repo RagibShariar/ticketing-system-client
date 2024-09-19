@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import {
   Table,
@@ -55,7 +56,7 @@ export function UserServiceRequests() {
         </TableHeader>
         <TableBody>
           {user?.role === "user" &&
-            data?.data?.map((element) => (
+            data?.data?.map((element: any) => (
               <TableRow key={element.id}>
                 <TableCell className="font-medium">{element.name}</TableCell>
                 <TableCell>{element.email}</TableCell>
@@ -69,7 +70,7 @@ export function UserServiceRequests() {
             ))}
 
           {user?.role === "admin" &&
-            allData?.data?.map((element) => (
+            allData?.data?.map((element: any) => (
               <TableRow key={element.id}>
                 <TableCell className="font-medium">{element.name}</TableCell>
                 <TableCell>{element.email}</TableCell>

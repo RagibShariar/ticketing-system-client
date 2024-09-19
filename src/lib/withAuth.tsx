@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // hoc/withAuth.tsx
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { useAppSelector } from "../lib/redux/hooks"; // Adjust based on your Redux setup
-import { useCurrentToken } from "../lib/redux/features/authSlice";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { toast } from "sonner";
+import { useCurrentToken } from "../lib/redux/features/authSlice";
+import { useAppSelector } from "../lib/redux/hooks"; // Adjust based on your Redux setup
 
 const withAuth = (WrappedComponent: React.ComponentType) => {
   const AuthComponent = (props: any) => {
@@ -16,7 +16,6 @@ const withAuth = (WrappedComponent: React.ComponentType) => {
       if (!token) {
         toast.warning("Please login to access this page");
         router.replace("/login");
-
       }
     }, [token, router]);
 

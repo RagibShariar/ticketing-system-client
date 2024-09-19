@@ -1,30 +1,30 @@
 "use client";
 
+import {
+  logOut,
+  useCurrentToken,
+  useCurrentUser,
+} from "@/lib/redux/features/authSlice";
+import { useAppDispatch } from "@/lib/redux/hooks";
 import Link from "next/link";
+import { useSelector } from "react-redux";
+import { toast } from "sonner";
+import { Button } from "../ui/button";
 import {
   NavigationMenu,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
-  navigationMenuTriggerStyle,
 } from "../ui/navigation-menu";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { logOut, useCurrentToken, useCurrentUser } from "@/lib/redux/features/authSlice";
-import { useSelector } from "react-redux";
-import { Button } from "../ui/button";
-import { toast } from "sonner";
 
 const Navbar = () => {
   const token = useSelector(useCurrentToken);
   const user = useSelector(useCurrentUser);
   const dispatch = useAppDispatch();
 
-
   const handleLogOut = () => {
     dispatch(logOut());
     toast.success("Logged Out Successfully");
   };
-
 
   return (
     <nav className="shadow py-2 bg-slate-200">
@@ -35,26 +35,25 @@ const Navbar = () => {
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem className="font-semibold hover:text-purple-800  px-4 py-2 cursor-pointer">
-              <Link  href="/contact-us">
-                
-                  Contact Us
-               
-              </Link>
+              <Link href="/contact-us">Contact Us</Link>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-        
+
         <div className="flex items-center gap-4">
-        <div>{user?.name}</div>
-        { 
-          !token
-          ? (<div><Link href={"/login"}>Login</Link></div>)
-          : (<div><Button onClick={handleLogOut} variant={"destructive"}>Logout</Button>  </div>)
-        }
-                  
+          <div>{user?.name}</div>
+          {!token ? (
+            <div>
+              <Link href={"/login"}>Login</Link>
+            </div>
+          ) : (
+            <div>
+              <Button onClick={handleLogOut} variant={"destructive"}>
+                Logout
+              </Button>{" "}
+            </div>
+          )}
         </div>
-        
-        
       </div>
     </nav>
   );

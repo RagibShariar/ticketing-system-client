@@ -1,16 +1,15 @@
-import { configureStore } from '@reduxjs/toolkit'
-import { baseApi } from './api/baseApi'
-import authReducer from "./features/authSlice";
+import { configureStore } from "@reduxjs/toolkit";
 import {
   FLUSH,
   PAUSE,
   PERSIST,
   persistReducer,
-  persistStore,
   PURGE,
   REGISTER,
   REHYDRATE,
 } from "redux-persist";
+import { baseApi } from "./api/baseApi";
+import authReducer from "./features/authSlice";
 import storage from "./storage";
 
 const persistConfig = {
@@ -24,7 +23,7 @@ export const makeStore = () => {
   return configureStore({
     reducer: {
       [baseApi.reducerPath]: baseApi.reducer,
-      auth : persistedAuthReducer
+      auth: persistedAuthReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
@@ -32,13 +31,12 @@ export const makeStore = () => {
           ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
         },
       }).concat(baseApi.middleware),
-      devTools: process.env.NODE_ENV !== "production",
-  })
-}
+    devTools: process.env.NODE_ENV !== "production",
+  });
+};
 
 // Infer the type of makeStore
-export type AppStore = ReturnType<typeof makeStore>
+export type AppStore = ReturnType<typeof makeStore>;
 // Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<AppStore['getState']>
-export type AppDispatch = AppStore['dispatch']
-
+export type RootState = ReturnType<AppStore["getState"]>;
+export type AppDispatch = AppStore["dispatch"];
