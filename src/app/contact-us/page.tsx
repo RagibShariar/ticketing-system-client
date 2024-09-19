@@ -50,10 +50,12 @@ const ContactForm = () => {
 
       if (res?.data?.success) {
         toast.success(res?.data?.message, { id: toastId, duration: 1000 });
+      } else {
+        toast.error(res?.data?.message, { id: toastId, duration: 1000 });
       }
     } catch (error: any) {
       // console.log(error);
-      toast.error(error?.data?.message || "Something went wrong", {
+      toast.error(error?.message || "Something went wrong", {
         id: toastId,
       });
     }
