@@ -53,7 +53,10 @@ const ContactForm = () => {
       if (res?.data?.success) {
         toast.success(res?.data?.message, { id: toastId, duration: 1000 });
       } else {
-        toast.error(res?.message, { id: toastId, duration: 1000 });
+        toast.error(res?.data?.message || "Something went wrong. Try again", {
+          id: toastId,
+          duration: 1000,
+        });
       }
     } catch (error: any) {
       // console.log(error);
