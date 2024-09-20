@@ -16,6 +16,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateRequestMutation } from "@/lib/redux/api/service-request/serviceRequestApi";
 import withAuth from "@/lib/withAuth";
+import { useState } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 import { FieldValues, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -23,7 +25,7 @@ const ContactForm = () => {
   const { register, handleSubmit, setValue } = useForm();
   const [createRequest] = useCreateRequestMutation();
 
-  // const [captchaVerified, setCaptchaVerified] = useState(false);
+  const [captchaVerified, setCaptchaVerified] = useState(false);
 
   // const handleChange = (e:any) => {
   //   setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -38,10 +40,10 @@ const ContactForm = () => {
       requestType: data.requestType,
     };
 
-    // if (!captchaVerified) {
-    //   alert("Please verify that you are not a robot.");
-    //   return;
-    // }
+    if (!captchaVerified) {
+      toast.warning("Please verify that you are not a robot.");
+      return;
+    }
     // console.log("Form data submitted:", submitData);
     // Handle form submission logic here (e.g., send to server)
     const toastId = toast.loading("Sending data...");
@@ -51,7 +53,7 @@ const ContactForm = () => {
       if (res?.data?.success) {
         toast.success(res?.data?.message, { id: toastId, duration: 1000 });
       } else {
-        toast.error(res?.data?.message, { id: toastId, duration: 1000 });
+        toast.error(res?.message, { id: toastId, duration: 1000 });
       }
     } catch (error: any) {
       // console.log(error);
@@ -61,9 +63,9 @@ const ContactForm = () => {
     }
   };
 
-  // const onCaptchaChange = (value) => {
-  //   setCaptchaVerified(!!value);
-  // };
+  const onCaptchaChange = (value: any) => {
+    setCaptchaVerified(!!value);
+  };
 
   return (
     <form
@@ -161,10 +163,10 @@ const ContactForm = () => {
       </div>
 
       <div>
-        {/* <ReCAPTCHA
-          sitekey={process.env.NEXT_PUBLIC_SITE_KEY} // Replace with your actual site key
+        <ReCAPTCHA
+          sitekey={process.env.NEXT_PUBLIC_SITE_KEY as string} // Replace with your actual site key
           onChange={onCaptchaChange}
-        /> */}
+        />
       </div>
 
       <Button type="submit">Send Message</Button>
