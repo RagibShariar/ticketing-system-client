@@ -21,6 +21,12 @@ const serviceRequestApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    changeStatus: builder.mutation({
+      query: () => ({
+        url: `/service-request/change-status`,
+        method: "PATCH", 
+      }),
+    }),
   }),
 });
 

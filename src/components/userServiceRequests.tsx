@@ -17,6 +17,7 @@ import {
   useCurrentUser,
 } from "@/lib/redux/features/authSlice";
 import { useAppSelector } from "@/lib/redux/hooks";
+import { useState } from "react";
 
 export function UserServiceRequests() {
   const token = useAppSelector(useCurrentToken);
@@ -24,6 +25,28 @@ export function UserServiceRequests() {
 
   const { data } = useViewServicesQuery("");
   const { data: allData } = useViewAllServicesQuery("");
+
+  const [selectedStatus, setSelectedStatus] = useState<{
+    id: string;
+    status: string;
+  }>({
+    id: "",
+    status: "",
+  });
+
+  const handleStatusChange = (
+    id: string,
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const newStatus = event.target.value;
+    setSelectedStatus({ id, status: newStatus });
+
+    // Now you can send the status and id to your API to update the status.
+    console.log("ID:", id, "New Status:", newStatus);
+
+    // Example: call an API to update status
+    // updateServiceRequestStatus(id, newStatus);
+  };
 
   if (!token || data?.data?.length === 0) {
     return (
@@ -34,8 +57,8 @@ export function UserServiceRequests() {
   }
 
   return (
-    <div>
-      <div className="mt-2 mb-4">
+    <div className="w-full">
+      <div className="mt-2 mb-4 bg-purple-100">
         <h1 className="text-xl font-medium text-center">
           Welcome, {user?.name}
         </h1>
@@ -43,43 +66,63 @@ export function UserServiceRequests() {
         <p className="text-center">role: {user?.role}</p>
       </div>
 
-      <Table>
+      <Table className="text-md">
         <TableHeader>
           <TableRow>
+            <TableHead>#</TableHead>
             <TableHead className="w-[100px]">Name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Subject</TableHead>
-            <TableHead>message</TableHead>
+            <TableHead className="w-1/2">message</TableHead>
             <TableHead>Request Type</TableHead>
             <TableHead>status</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {user?.role === "user" &&
-            data?.data?.map((element: any) => (
+            data?.data?.map((element: any, index: number) => (
               <TableRow key={element.id}>
+                <TableCell>{index + 1}</TableCell>
                 <TableCell className="font-medium">{element.name}</TableCell>
                 <TableCell>{element.email}</TableCell>
                 <TableCell>{element.subject}</TableCell>
                 <TableCell className="max-w-[250px] overflow-x-auto">
                   {element.message}
                 </TableCell>
-                <TableCell>{element.requestType}</TableCell>
+                <TableCell>
+                  {element.requestTypeId === 1 ? "incident" : ""}
+                  {element.requestTypeId === 2 ? "request" : ""}
+                  {element.requestTypeId === 3 ? "change" : ""}
+                </TableCell>
                 <TableCell>{element.status}</TableCell>
               </TableRow>
             ))}
 
           {user?.role === "admin" &&
-            allData?.data?.map((element: any) => (
+            allData?.data?.map((element: any, index: number) => (
               <TableRow key={element.id}>
+                <TableCell>{index + 1}</TableCell>
                 <TableCell className="font-medium">{element.name}</TableCell>
                 <TableCell>{element.email}</TableCell>
                 <TableCell>{element.subject}</TableCell>
                 <TableCell className="max-w-[250px] overflow-x-auto">
                   {element.message}
                 </TableCell>
-                <TableCell>{element.requestType}</TableCell>
-                <TableCell>{element.status}</TableCell>
+                <TableCell>
+                  {element.requestTypeId === 1 ? "incident" : ""}
+                  {element.requestTypeId === 2 ? "request" : ""}
+                  {element.requestTypeId === 3 ? "change" : ""}
+                </TableCell>
+                <TableCell>
+                  <select
+                    defaultValue={element.status}
+                    onChange={(e) => handleStatusChange(element.id, e)}
+                  >
+                    <option value="pending">{element.status}</option>
+                    <option value="completed">✅ Completed</option>
+                    <option value="cancelled">❌Cancelled</option>
+                  </select>
+                </TableCell>
               </TableRow>
             ))}
         </TableBody>

@@ -6,10 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLoginMutation } from "@/lib/redux/api/auth/authApi";
 import { CircleAlert } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FieldValues, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { signIn } from "next-auth/react";
 
 const LoginPage = () => {
   const [login] = useLoginMutation();
@@ -94,6 +96,20 @@ const LoginPage = () => {
             </div>
           </form>
           {/* <GoogleSignIn /> */}
+          <Button
+            variant={"ghost"}
+            className="w-full mt-4 border"
+            onClick={() => signIn("google", { callbackUrl: "/" })}
+          >
+            <Image
+              className="mr-2"
+              src="https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-webinar-optimizing-for-success-google-business-webinar-13.png"
+              width={30}
+              height={30}
+              alt="google logo"
+            />
+            Login to Google
+          </Button>
           <div className="mt-4 text-center text-sm flex items-center justify-center">
             <div>
               Don&apos;t have an account?{" "}

@@ -4,15 +4,15 @@ import { Button } from "@/components/ui/button";
 import { useSignUpMutation } from "@/lib/redux/api/auth/authApi";
 import { EyeClosedIcon, EyeOpenIcon } from "@radix-ui/react-icons";
 import { CircleAlert } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-
 const SignUp = () => {
   const [signUp] = useSignUpMutation();
-  const router = useRouter()
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -46,20 +46,20 @@ const SignUp = () => {
     try {
       // console.log(signUpData)
       const res = await signUp(signUpData).unwrap();
-      console.log(res)
+      console.log(res);
 
       if (res?.success) {
         toast.success(res?.message, { id: toastId, duration: 1500 });
         // localStorage.setItem("userEmail", signUpData.email);
-        router.push("/login")
+        router.push("/login");
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      toast.error(error?.data?.message || "Something went wrong", { id: toastId }  );
-      console.log(error)
+      toast.error(error?.data?.message || "Something went wrong", {
+        id: toastId,
+      });
+      console.log(error);
     }
-
-  
   };
 
   return (
@@ -201,8 +201,7 @@ const SignUp = () => {
               </div>
               {errors.name && (
                 <span className="mt-2 text-sm text-red-500 flex items-center">
-                  <CircleAlert className="mr-1" /> Confirm password is
-                  required
+                  <CircleAlert className="mr-1" /> Confirm password is required
                 </span>
               )}
             </div>
@@ -229,8 +228,8 @@ const SignUp = () => {
               </div>
               {errors.termsAndConditions && (
                 <span className="mt-2 text-sm text-red-500 flex items-center">
-                  <CircleAlert className="mr-1" /> You must accept our terms
-                  and conditions
+                  <CircleAlert className="mr-1" /> You must accept our terms and
+                  conditions
                 </span>
               )}
             </div>
@@ -253,7 +252,7 @@ const SignUp = () => {
           <p className="mt-6 text-sm text-center ">
             Already have an account?
             <span className="ml-1 font-semibold text-blue-600 hover:underline">
-              {" "}
+              <Link href={"/login"}>Login Here</Link>
             </span>
           </p>
         </form>
