@@ -26,6 +26,7 @@ export function UserServiceRequests() {
   const { data } = useViewServicesQuery("");
   const { data: allData } = useViewAllServicesQuery("");
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedStatus, setSelectedStatus] = useState<{
     id: string;
     status: string;
