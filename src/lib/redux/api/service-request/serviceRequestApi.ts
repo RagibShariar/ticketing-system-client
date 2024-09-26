@@ -16,15 +16,26 @@ const serviceRequestApi = baseApi.injectEndpoints({
       }),
     }),
     viewAllServices: builder.query({
-      query: () => ({
-        url: `/service-request/all`,
-        method: "GET",
-      }),
+      query: ({ email, id, days }) => {
+        // Build query parameters
+        const queryParams = new URLSearchParams();
+
+        if (email) queryParams.append("email", email);
+        if (id) queryParams.append("id", id);
+        if (days) queryParams.append("days", days);
+
+        const queryString = queryParams.toString();
+
+        return {
+          url: `/service-request/all${queryString ? `?${queryString}` : ""}`, // Only append ? if query string exists
+          method: "GET",
+        };
+      },
     }),
     changeStatus: builder.mutation({
       query: () => ({
         url: `/service-request/change-status`,
-        method: "PATCH", 
+        method: "PATCH",
       }),
     }),
   }),

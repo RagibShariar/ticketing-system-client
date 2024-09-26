@@ -15,7 +15,9 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateRequestMutation } from "@/lib/redux/api/service-request/serviceRequestApi";
+import { useAppSelector } from "@/lib/redux/hooks";
 import withAuth from "@/lib/withAuth";
+import Image from "next/image";
 import { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { FieldValues, useForm } from "react-hook-form";
@@ -24,21 +26,27 @@ import { toast } from "sonner";
 const ContactForm = () => {
   const { register, handleSubmit, setValue } = useForm();
   const [createRequest] = useCreateRequestMutation();
-
   const [captchaVerified, setCaptchaVerified] = useState(false);
-
-  // const handleChange = (e:any) => {
-  //   setFormData({ ...formData, [e.target.name]: e.target.value });
-  // };
+  const userInfo = useAppSelector((state) => state.auth.userInfo);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleFormSubmit = async (data: FieldValues) => {
-    const submitData = {
-      name: data.name,
-      email: data.email,
-      subject: data.subject,
-      message: data.message,
-      requestType: data.requestType,
-    };
+    const submitData = new FormData();
+
+    submitData.append("name", data.name);
+    submitData.append("email", data.email);
+    submitData.append("subject", data.subject);
+    submitData.append("message", data.message);
+    submitData.append("requestType", data.requestType);
+    submitData.append("companyName", data.companyName);
+    submitData.append("designation", data.designation);
+
+    // Append image file if it exists
+    if (data.image && data.image.length > 0) {
+      submitData.append("image", data.image[0]); // Get the first image file
+    }
+
+    // console.log(submitData); // Debugging
 
     if (!captchaVerified) {
       toast.warning("Please verify that you are not a robot.");
@@ -70,6 +78,20 @@ const ContactForm = () => {
     setCaptchaVerified(!!value);
   };
 
+  // Handle file input change and set image preview
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImagePreview(reader.result as string); // Set the image preview URL
+      };
+      reader.readAsDataURL(file); // Read the image file as a data URL
+    } else {
+      setImagePreview(null); // Clear preview if no file is selected
+    }
+  };
+
   return (
     <form
       onSubmit={handleSubmit(handleFormSubmit)}
@@ -87,8 +109,8 @@ const ContactForm = () => {
             className="text-md py-6 rounded-none shadow-none  border-gray-400"
             type="text"
             id="name"
+            value={userInfo?.name}
             {...register("name", { required: true })}
-            required
           />
         </div>
 
@@ -100,8 +122,36 @@ const ContactForm = () => {
             className="text-md py-6 rounded-none shadow-none  border-gray-400"
             type="email"
             id="email"
+            value={userInfo?.email}
             {...register("email", { required: true })}
-            required
+          />
+        </div>
+      </div>
+
+      <div className="flex justify-center items-center  gap-6">
+        <div className="w-full">
+          <Label htmlFor="companyName">
+            Company Name <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            className="text-md py-6 rounded-none shadow-none  border-gray-400"
+            type="text"
+            id="companyName"
+            value={userInfo?.companyName}
+            {...register("companyName", { required: true })}
+          />
+        </div>
+
+        <div className="w-full">
+          <Label htmlFor="designation">
+            Designation <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            className="text-md py-6 rounded-none shadow-none  border-gray-400"
+            type="text"
+            id="designation"
+            value={userInfo?.designation}
+            {...register("designation", { required: true })}
           />
         </div>
       </div>
@@ -126,6 +176,7 @@ const ContactForm = () => {
           </Label>
 
           <Select
+            required
             {...register("requestType", { required: true })}
             onValueChange={(value) => setValue("requestType", value)}
           >
@@ -163,6 +214,31 @@ const ContactForm = () => {
           {...register("message", { required: true })}
           required
         />
+      </div>
+
+      <div className="grid w-full  items-center gap-1.5 ">
+        <Label htmlFor="image">Picture</Label>
+        <Input
+          {...register("image")}
+          className="grid w-full items-center gap-1.5 shadow-none rounded-none  border-gray-400 "
+          id="image"
+          type="file"
+          accept="image/*" // Restrict file input to images only
+          onChange={handleImageChange} // Handle file change to show preview
+        />
+        {/* Image Preview */}
+        {imagePreview && (
+          <div className="mt-4">
+            <p>Image Preview:</p>
+            <Image
+              src={imagePreview}
+              alt="Preview"
+              width={500}
+              height={200}
+              className="h-40 w-40 object-cover"
+            />
+          </div>
+        )}
       </div>
 
       <div>

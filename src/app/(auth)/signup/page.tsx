@@ -30,8 +30,10 @@ const SignUp = () => {
   };
 
   const handleSignUp = async (data: FieldValues) => {
-    const { name, email, password, confirmPassword } = data;
-    const signUpData = { name, email, password };
+    const { name, email, password, confirmPassword, companyName, designation } =
+      data;
+
+    const signUpData = { name, email, password, companyName, designation };
 
     // reset error message
     setSignUpError("");
@@ -102,7 +104,7 @@ const SignUp = () => {
               </div>
               {errors.name && (
                 <span className="mt-2 text-sm text-red-500 flex items-center">
-                  <CircleAlert className="mr-1" /> Name is required
+                  <CircleAlert className="mr-1 size-3" /> Name is required
                 </span>
               )}
             </div>
@@ -145,7 +147,97 @@ const SignUp = () => {
               </div>
               {errors.email && (
                 <span className="mt-2 text-sm text-red-500 flex items-center">
-                  <CircleAlert className="mr-1" /> Email is required
+                  <CircleAlert className="mr-1 size-3" /> Email is required
+                </span>
+              )}
+            </div>
+            {/* company name */}
+            <div>
+              <label className="block mb-2 text-sm font-medium leading-6 text-gray-900 dark:text-gray-200">
+                Company Name
+              </label>
+              <div className="relative flex items-center">
+                <input
+                  {...register("companyName", { required: true })}
+                  type="text"
+                  className="w-full py-2.5 pl-4 pr-10 text-sm border border-gray-300 rounded outline-blue-500 dark:bg-slate-900"
+                  placeholder="Enter your company name"
+                />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="#bbb"
+                  stroke="#bbb"
+                  className="absolute w-4 h-4 right-4"
+                  viewBox="0 0 682.667 682.667"
+                >
+                  <defs>
+                    <clipPath id="a" clipPathUnits="userSpaceOnUse">
+                      <path d="M0 512h512V0H0Z" />
+                    </clipPath>
+                  </defs>
+                  <g
+                    clipPath="url(#a)"
+                    transform="matrix(1.33 0 0 -1.33 0 682.667)"
+                  >
+                    <path
+                      fill="none"
+                      strokeMiterlimit="10"
+                      strokeWidth="40"
+                      d="M452 444H60c-22.091 0-40-17.909-40-40v-39.446l212.127-157.782c14.17-10.54 33.576-10.54 47.746 0L492 364.554V404c0 22.091-17.909 40-40 40Z"
+                    />
+                    <path d="M472 274.9V107.999c0-11.027-8.972-20-20-20H60c-11.028 0-20 8.973-20 20V274.9L0 304.652V107.999c0-33.084 26.916-60 60-60h392c33.084 0 60 26.916 60 60v196.653Z" />
+                  </g>
+                </svg>
+              </div>
+              {errors.companyName && (
+                <span className="mt-2 text-sm text-red-500 flex items-center">
+                  <CircleAlert className="mr-1 size-3" /> Company name is
+                  required
+                </span>
+              )}
+            </div>
+            {/* designation */}
+            <div>
+              <label className="block mb-2 text-sm font-medium leading-6 text-gray-900 dark:text-gray-200">
+                Your Designation
+              </label>
+              <div className="relative flex items-center">
+                <input
+                  {...register("designation", { required: true })}
+                  type="text"
+                  className="w-full py-2.5 pl-4 pr-10 text-sm border border-gray-300 rounded outline-blue-500 dark:bg-slate-900"
+                  placeholder="Enter your designation"
+                />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="#bbb"
+                  stroke="#bbb"
+                  className="absolute w-4 h-4 right-4"
+                  viewBox="0 0 682.667 682.667"
+                >
+                  <defs>
+                    <clipPath id="a" clipPathUnits="userSpaceOnUse">
+                      <path d="M0 512h512V0H0Z" />
+                    </clipPath>
+                  </defs>
+                  <g
+                    clipPath="url(#a)"
+                    transform="matrix(1.33 0 0 -1.33 0 682.667)"
+                  >
+                    <path
+                      fill="none"
+                      strokeMiterlimit="10"
+                      strokeWidth="40"
+                      d="M452 444H60c-22.091 0-40-17.909-40-40v-39.446l212.127-157.782c14.17-10.54 33.576-10.54 47.746 0L492 364.554V404c0 22.091-17.909 40-40 40Z"
+                    />
+                    <path d="M472 274.9V107.999c0-11.027-8.972-20-20-20H60c-11.028 0-20 8.973-20 20V274.9L0 304.652V107.999c0-33.084 26.916-60 60-60h392c33.084 0 60 26.916 60 60v196.653Z" />
+                  </g>
+                </svg>
+              </div>
+              {errors.designation && (
+                <span className="mt-2 text-sm text-red-500 flex items-center">
+                  <CircleAlert className="mr-1 size-3" /> designation is
+                  required
                 </span>
               )}
             </div>
@@ -173,7 +265,7 @@ const SignUp = () => {
               </div>
               {errors.password && (
                 <span className="mt-2 text-sm text-red-500 flex items-center">
-                  <CircleAlert className="mr-1" /> Password is required
+                  <CircleAlert className="mr-1 size-3" /> Password is required
                 </span>
               )}
             </div>
@@ -201,7 +293,8 @@ const SignUp = () => {
               </div>
               {errors.name && (
                 <span className="mt-2 text-sm text-red-500 flex items-center">
-                  <CircleAlert className="mr-1" /> Confirm password is required
+                  <CircleAlert className="mr-1 size-3" /> Confirm password is
+                  required
                 </span>
               )}
             </div>
@@ -228,8 +321,8 @@ const SignUp = () => {
               </div>
               {errors.termsAndConditions && (
                 <span className="mt-2 text-sm text-red-500 flex items-center">
-                  <CircleAlert className="mr-1" /> You must accept our terms and
-                  conditions
+                  <CircleAlert className="mr-1 size-3" /> You must accept our
+                  terms and conditions
                 </span>
               )}
             </div>

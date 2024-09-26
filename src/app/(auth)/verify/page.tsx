@@ -36,7 +36,9 @@ const VerifyOtpPage = () => {
       const res = await verifyLogin(verifyInfo).unwrap();
       const user = jwtDecode(res.token) as TUser;
 
-      dispatch(setUser({ user: user, token: res.token }));
+      console.log(res?.data);
+
+      dispatch(setUser({ user: user, token: res.token, userInfo: res?.data }));
       toast.success("Login Successful", { id: toastId, duration: 2000 });
       router.push("/");
       localStorage.removeItem("userEmail");

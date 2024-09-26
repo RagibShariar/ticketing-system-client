@@ -6,12 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLoginMutation } from "@/lib/redux/api/auth/authApi";
 import { CircleAlert } from "lucide-react";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FieldValues, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { signIn } from "next-auth/react";
 
 const LoginPage = () => {
   const [login] = useLoginMutation();
@@ -65,7 +65,7 @@ const LoginPage = () => {
                 />
                 {errors.email && (
                   <span className="text-sm text-red-500 flex items-center">
-                    <CircleAlert className="mr-1" /> Email is required
+                    <CircleAlert className="mr-1 size-3" /> Email is required
                   </span>
                 )}
               </div>
@@ -86,7 +86,7 @@ const LoginPage = () => {
                 />
                 {errors.password && (
                   <span className="text-sm text-red-500 flex items-center">
-                    <CircleAlert className="mr-1" /> Password is required
+                    <CircleAlert className="mr-1 size-3" /> Password is required
                   </span>
                 )}
               </div>
