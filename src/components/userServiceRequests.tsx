@@ -199,6 +199,8 @@ export function UserServiceRequests() {
                 <TableCell>{element.id}</TableCell>
                 <TableCell className="font-medium">{element.name}</TableCell>
                 <TableCell>{element.email}</TableCell>
+                <TableCell>{element.user.companyName}</TableCell>
+                <TableCell>{element.user.designation}</TableCell>
                 <TableCell>{element.subject}</TableCell>
                 <TableCell className="max-w-[250px] overflow-x-auto">
                   {element.message}
