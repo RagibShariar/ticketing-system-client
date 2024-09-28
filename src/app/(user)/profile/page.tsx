@@ -42,7 +42,7 @@ const Profile = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error?.message || "Failed to update", { id: toastId });
+      toast.error("Failed to update", { id: toastId });
     }
   };
   if (userLoading || updateLoading) {

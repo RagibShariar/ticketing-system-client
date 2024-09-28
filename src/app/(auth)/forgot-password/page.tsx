@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -15,7 +16,7 @@ import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { toast } from "sonner";
 
 const ForgotPassword = () => {
-  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
+  const [forgotPassword] = useForgotPasswordMutation();
 
   const handleForgotPassword = async (e: any) => {
     e.preventDefault();
