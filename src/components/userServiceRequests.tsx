@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import {
@@ -9,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  useChangeStatusMutation,
   useLazyViewAllServicesQuery,
   useViewServicesQuery,
 } from "@/lib/redux/api/service-request/serviceRequestApi";
@@ -20,60 +22,63 @@ import { useAppSelector } from "@/lib/redux/hooks";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { RequestDetails } from "./RequestDetails";
 
 export function UserServiceRequests() {
   const token = useAppSelector(useCurrentToken);
   const user = useAppSelector(useCurrentUser);
 
   const { data, isLoading } = useViewServicesQuery("");
-  // const { data: allData, isLoading: allDataLoading } =
-  //   useViewAllServicesQuery("");
-
   const [
     triggerViewAllServicesQuery,
     { data: allData, isLoading: allDataLoading },
   ] = useLazyViewAllServicesQuery();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedStatus, setSelectedStatus] = useState<{
-    id: string;
-    status: string;
-  }>({
-    id: "",
-    status: "",
-  });
   const { register, handleSubmit } = useForm();
   const [filterBy, setFilterBy] = useState("all");
 
+  const [changeStatus] = useChangeStatusMutation();
+
+  // Fetch last 3 days' data initially on load
   useEffect(() => {
-    // Fetch all data initially (no filters)
-    triggerViewAllServicesQuery({});
+    triggerViewAllServicesQuery({ days: 3 });
   }, [triggerViewAllServicesQuery]);
 
   const onSubmit = async (data: FieldValues) => {
-    let queryData = {};
+    const queryData: any = {};
+
+    // Add email filter if selected
     if (filterBy === "email") {
-      queryData = { ...queryData, email: data.email };
-    } else if (filterBy === "ticketId") {
-      queryData = { ...queryData, id: data.ticketId };
+      queryData.email = data.email;
     }
-    console.log(queryData);
-    // Call the query with the selected filter
+    // Add ticket ID filter if selected
+    else if (filterBy === "ticketId") {
+      queryData.id = data.ticketId;
+    }
+    // Add days filter if input is provided
+    if (data.days) {
+      queryData.days = data.days;
+    }
+
+    // Call the query with the filters
     triggerViewAllServicesQuery(queryData);
   };
 
-  const handleStatusChange = (
+  const handleStatusChange = async (
     id: string,
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const newStatus = event.target.value;
-    setSelectedStatus({ id, status: newStatus });
-
-    // Now you can send the status and id to your API to update the status.
-    console.log("ID:", id, "New Status:", newStatus);
-
-    // Example: call an API to update status
-    // updateServiceRequestStatus(id, newStatus);
+    const toastId = toast.loading("Updating...");
+    try {
+      const res = await changeStatus({ id, status: newStatus }).unwrap();
+      if (res?.success === true) {
+        toast.success("Status updated successfully", { id: toastId });
+      }
+    } catch (error: any) {
+      toast.error("Failed to update", { id: toastId });
+    }
   };
 
   if (!token || data?.data?.length === 0) {
@@ -149,6 +154,17 @@ export function UserServiceRequests() {
               </div>
             )}
 
+            {/* Days Filter Input */}
+            <div>
+              <input
+                type="number"
+                id="days"
+                className="block w-full p-2 border border-gray-300 rounded-md"
+                placeholder="Enter days"
+                {...register("days")}
+              />
+            </div>
+
             {/* Submit Button */}
             <div>
               <button
@@ -165,20 +181,22 @@ export function UserServiceRequests() {
       <Table className="text-md">
         <TableHeader>
           <TableRow>
-            <TableHead>#</TableHead>
-            <TableHead className="w-[100px]">Name</TableHead>
+            <TableHead>Ticket Id</TableHead>
+            <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
+            <TableHead>Company Name</TableHead>
+            <TableHead>Designation</TableHead>
             <TableHead>Subject</TableHead>
-            <TableHead className="w-1/2">message</TableHead>
+            <TableHead>Details</TableHead>
             <TableHead>Request Type</TableHead>
-            <TableHead>status</TableHead>
+            <TableHead>Status</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {user?.role === "user" &&
-            data?.data?.map((element: any, index: number) => (
+            data?.data?.map((element: any) => (
               <TableRow key={element.id}>
-                <TableCell>{index + 1}</TableCell>
+                <TableCell>{element.id}</TableCell>
                 <TableCell className="font-medium">{element.name}</TableCell>
                 <TableCell>{element.email}</TableCell>
                 <TableCell>{element.subject}</TableCell>
@@ -195,14 +213,16 @@ export function UserServiceRequests() {
             ))}
 
           {user?.role === "admin" &&
-            allData?.data?.map((element: any, index: number) => (
+            allData?.data?.map((element: any) => (
               <TableRow key={element.id}>
-                <TableCell>{index + 1}</TableCell>
+                <TableCell>{element.id}</TableCell>
                 <TableCell className="font-medium">{element.name}</TableCell>
                 <TableCell>{element.email}</TableCell>
-                <TableCell>{element.subject}</TableCell>
-                <TableCell className="max-w-[250px] overflow-x-auto">
-                  {element.message}
+                <TableCell>{element.user.companyName}</TableCell>
+                <TableCell>{element.user.designation}</TableCell>
+                <TableCell className="font-medium">{element.subject}</TableCell>
+                <TableCell>
+                  <RequestDetails element={element} />
                 </TableCell>
                 <TableCell>
                   {element.requestTypeId === 1 ? "incident" : ""}
@@ -214,8 +234,9 @@ export function UserServiceRequests() {
                     defaultValue={element.status}
                     onChange={(e) => handleStatusChange(element.id, e)}
                   >
-                    <option value="pending">{element.status}</option>
-                    <option value="completed">✅ Completed</option>
+                    <option value="pending">Pending</option>
+                    <option value="in_progress">⏳ In-progress</option>
+                    <option value="fulfilled">✅ Fulfilled</option>
                     <option value="cancelled">❌Cancelled</option>
                   </select>
                 </TableCell>

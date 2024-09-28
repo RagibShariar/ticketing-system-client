@@ -20,6 +20,7 @@ import {
 import { useAppDispatch } from "@/lib/redux/hooks";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
@@ -33,9 +34,11 @@ const Navbar = () => {
   const token = useSelector(useCurrentToken);
   const user = useSelector(useCurrentUser);
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const handleLogOut = () => {
     dispatch(logOut());
+    router.push("/login");
     toast.success("Logged Out Successfully");
   };
 

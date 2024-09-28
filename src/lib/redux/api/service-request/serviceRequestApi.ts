@@ -33,9 +33,10 @@ const serviceRequestApi = baseApi.injectEndpoints({
       },
     }),
     changeStatus: builder.mutation({
-      query: () => ({
+      query: ({ id, status }) => ({
         url: `/service-request/change-status`,
         method: "PATCH",
+        body: { id, status },
       }),
     }),
   }),
@@ -46,4 +47,5 @@ export const {
   useViewServicesQuery,
   useViewAllServicesQuery,
   useLazyViewAllServicesQuery,
+  useChangeStatusMutation,
 } = serviceRequestApi;
