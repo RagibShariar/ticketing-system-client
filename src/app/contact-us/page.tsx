@@ -18,6 +18,7 @@ import { useCreateRequestMutation } from "@/lib/redux/api/service-request/servic
 import { useAppSelector } from "@/lib/redux/hooks";
 import withAuth from "@/lib/withAuth";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { FieldValues, useForm } from "react-hook-form";
@@ -29,6 +30,7 @@ const ContactForm = () => {
   const [captchaVerified, setCaptchaVerified] = useState(false);
   const userInfo = useAppSelector((state) => state.auth.userInfo);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleFormSubmit = async (data: FieldValues) => {
     const submitData = new FormData();
@@ -60,6 +62,7 @@ const ContactForm = () => {
 
       if (res?.data?.success) {
         toast.success(res?.data?.message, { id: toastId, duration: 1000 });
+        router.push("/message-sent-success"); // Redirect to the success page
       } else {
         toast.error(res?.data?.message || "Something went wrong. Try again", {
           id: toastId,

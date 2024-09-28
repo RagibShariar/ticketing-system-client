@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  useViewAllServicesQuery,
+  useLazyViewAllServicesQuery,
   useViewServicesQuery,
 } from "@/lib/redux/api/service-request/serviceRequestApi";
 import {
@@ -17,14 +17,22 @@ import {
   useCurrentUser,
 } from "@/lib/redux/features/authSlice";
 import { useAppSelector } from "@/lib/redux/hooks";
-import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { FieldValues, useForm } from "react-hook-form";
 
 export function UserServiceRequests() {
   const token = useAppSelector(useCurrentToken);
   const user = useAppSelector(useCurrentUser);
 
-  const { data } = useViewServicesQuery("");
-  const { data: allData } = useViewAllServicesQuery("");
+  const { data, isLoading } = useViewServicesQuery("");
+  // const { data: allData, isLoading: allDataLoading } =
+  //   useViewAllServicesQuery("");
+
+  const [
+    triggerViewAllServicesQuery,
+    { data: allData, isLoading: allDataLoading },
+  ] = useLazyViewAllServicesQuery();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedStatus, setSelectedStatus] = useState<{
@@ -34,6 +42,25 @@ export function UserServiceRequests() {
     id: "",
     status: "",
   });
+  const { register, handleSubmit } = useForm();
+  const [filterBy, setFilterBy] = useState("all");
+
+  useEffect(() => {
+    // Fetch all data initially (no filters)
+    triggerViewAllServicesQuery({});
+  }, [triggerViewAllServicesQuery]);
+
+  const onSubmit = async (data: FieldValues) => {
+    let queryData = {};
+    if (filterBy === "email") {
+      queryData = { ...queryData, email: data.email };
+    } else if (filterBy === "ticketId") {
+      queryData = { ...queryData, id: data.ticketId };
+    }
+    console.log(queryData);
+    // Call the query with the selected filter
+    triggerViewAllServicesQuery(queryData);
+  };
 
   const handleStatusChange = (
     id: string,
@@ -57,6 +84,14 @@ export function UserServiceRequests() {
     );
   }
 
+  if (isLoading || allDataLoading) {
+    return (
+      <div className="h-[85vh] flex items-center justify-center">
+        <Loader2 size={20} className="animate-spin mr-2" /> Loading...
+      </div>
+    );
+  }
+
   return (
     <div className="w-full">
       <div className="mt-2 mb-4 bg-purple-100">
@@ -66,6 +101,66 @@ export function UserServiceRequests() {
         <h2 className="text-md font-medium text-center"> {user?.email}</h2>
         <p className="text-center">role: {user?.role}</p>
       </div>
+
+      {user?.role === "admin" && (
+        <div className="bg-red-200 flex items-center justify-start p-4">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex space-x-4 items-center"
+          >
+            {/* Filter by Select */}
+            <div>
+              <select
+                defaultValue="all"
+                className="p-2 border border-gray-300 rounded-md"
+                onChange={(e) => setFilterBy(e.target.value)}
+              >
+                <option value="all">All</option>
+                <option value="email">Email</option>
+                <option value="ticketId">Ticket ID</option>
+              </select>
+            </div>
+
+            {/* Email Input - Show only if "email" is selected */}
+            {filterBy === "email" && (
+              <div>
+                <input
+                  type="email"
+                  id="email"
+                  className="block w-full p-2 border border-gray-300 rounded-md"
+                  placeholder="Enter email"
+                  {...register("email", { required: filterBy === "email" })}
+                />
+              </div>
+            )}
+
+            {/* Ticket ID Input - Show only if "ticketId" is selected */}
+            {filterBy === "ticketId" && (
+              <div>
+                <input
+                  type="text"
+                  id="ticketId"
+                  className="block w-full p-2 border border-gray-300 rounded-md"
+                  placeholder="Enter Ticket ID"
+                  {...register("ticketId", {
+                    required: filterBy === "ticketId",
+                  })}
+                />
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <div>
+              <button
+                type="submit"
+                className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+              >
+                Search
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       <Table className="text-md">
         <TableHeader>

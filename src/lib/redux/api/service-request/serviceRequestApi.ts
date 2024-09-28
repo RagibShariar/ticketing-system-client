@@ -45,4 +45,5 @@ export const {
   useCreateRequestMutation,
   useViewServicesQuery,
   useViewAllServicesQuery,
+  useLazyViewAllServicesQuery,
 } = serviceRequestApi;
