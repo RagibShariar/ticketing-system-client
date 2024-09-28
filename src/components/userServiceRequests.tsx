@@ -103,7 +103,7 @@ export function UserServiceRequests() {
       </div>
 
       {user?.role === "admin" && (
-        <div className="bg-red-200 flex items-center justify-start p-4">
+        <div className="flex items-center justify-start p-4">
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="flex space-x-4 items-center"

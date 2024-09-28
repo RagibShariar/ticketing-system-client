@@ -12,6 +12,7 @@ export type TUser = {
 export type TUserInfo = {
   name: string;
   email: string;
+  phone: string;
   companyName: string;
   designation: string;
 };

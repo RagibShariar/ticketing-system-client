@@ -1,25 +1,53 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { RootState } from "@/lib/redux/store";
+import {
+  useGetUserInfoQuery,
+  useUpdateUserMutation,
+} from "@/lib/redux/api/user/userApi";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import { Edit2Icon } from "lucide-react";
 import { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { toast } from "sonner";
 
 const Profile = () => {
   const [isEdit, setIsEdit] = useState(false);
-  const user = useSelector((state: RootState) => state.auth.userInfo);
+  const {
+    data: user,
+    isLoading: userLoading,
+    refetch,
+  } = useGetUserInfoQuery("");
   const { register, handleSubmit } = useForm();
+  const [updateUser, { isLoading: updateLoading }] = useUpdateUserMutation();
 
   const handleProfileEdit = () => {
     setIsEdit(!isEdit);
   };
 
-  const onSubmit = (data: FieldValues) => {
-    console.log(data);
+  const onSubmit = async (data: FieldValues) => {
+    const userData = {
+      phone: data.phone,
+      designation: data.designation,
+    };
+    console.log(userData);
+    const toastId = toast.loading("Updating...");
+    try {
+      const res = await updateUser(userData);
+      console.log(res);
+      if (res?.data?.success) {
+        toast.success("Updated successfully", { id: toastId });
+        setIsEdit(false);
+        refetch();
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.message || "Failed to update", { id: toastId });
+    }
   };
+  if (userLoading || updateLoading) {
+    return <div>Loading...</div>;
+  }
 
   if (!isEdit) {
     return (
@@ -35,11 +63,15 @@ const Profile = () => {
           <div className="mb-12 md:grid md:grid-cols-2 ">
             <div>
               <p className="text-lg ">Full Name</p>
-              <h3 className="mt-2 p-3 text-xl font-semibold">{user?.name}</h3>
+              <h3 className="mt-2 p-3 text-xl font-semibold">
+                {user?.data?.name}
+              </h3>
             </div>
             <div>
               <p className="text-lg"> Email</p>
-              <h3 className="mt-2 p-3 text-xl font-semibold">{user?.email}</h3>
+              <h3 className="mt-2 p-3 text-xl font-semibold">
+                {user?.data?.email}
+              </h3>
             </div>
           </div>
           {/* 2nd row */}
@@ -47,7 +79,7 @@ const Profile = () => {
             <div>
               <p className="text-lg">Mobile Number</p>
               <h3 className="mt-2 p-3 text-xl font-semibold">
-                {user?.phone || "Not Set"}
+                {user?.data?.phone || "Not Set"}
               </h3>
             </div>
           </div>
@@ -56,13 +88,13 @@ const Profile = () => {
             <div>
               <p className="text-lg">Company Name</p>
               <h3 className="mt-2 p-3 text-xl font-semibold">
-                {user?.companyName}
+                {user?.data?.companyName}
               </h3>
             </div>
             <div>
               <p className="text-lg">Designation</p>
               <h3 className="mt-2 p-3 text-xl font-semibold">
-                {user?.designation}
+                {user?.data?.designation}
               </h3>
             </div>
           </div>
@@ -85,11 +117,15 @@ const Profile = () => {
           <div className="mb-12 md:grid md:grid-cols-2 ">
             <div>
               <p className="text-lg ">Full Name</p>
-              <h3 className="mt-2 p-3 text-xl font-semibold">{user?.name}</h3>
+              <h3 className="mt-2 p-3 text-xl font-semibold">
+                {user?.data?.name}
+              </h3>
             </div>
             <div>
               <p className="text-lg ">Email</p>
-              <h3 className="mt-2 p-3 text-xl font-semibold">{user?.email}</h3>
+              <h3 className="mt-2 p-3 text-xl font-semibold">
+                {user?.data?.email}
+              </h3>
             </div>
           </div>
           {/* 2nd row */}
@@ -100,7 +136,8 @@ const Profile = () => {
                 className="mt-2 text-xl font-semibold bg-zinc-200 p-3 rounded-lg w-full"
                 type="text"
                 placeholder={"Enter your mobile number"}
-                {...register("mobileNumber")}
+                defaultValue={user?.data?.phone}
+                {...register("phone")}
               />
             </div>
           </div>
@@ -109,7 +146,7 @@ const Profile = () => {
             <div>
               <p className="text-lg ">Company Name</p>
               <h3 className="mt-2 p-3 text-xl font-semibold">
-                {user?.companyName}
+                {user?.data?.companyName}
               </h3>
             </div>
             <div className="mr-6">
@@ -117,7 +154,7 @@ const Profile = () => {
               <input
                 className="mt-2 text-xl font-semibold bg-zinc-200 p-3 rounded-lg w-full"
                 type="text"
-                defaultValue={user?.designation}
+                defaultValue={user?.data?.designation}
                 {...register("designation")}
               />
             </div>
