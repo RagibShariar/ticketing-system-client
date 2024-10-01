@@ -9,7 +9,7 @@ export function RequestDetails({ element }: any) {
       <DialogTrigger asChild>
         <Button variant="outline">View Details</Button>
       </DialogTrigger>
-      <DialogContent className=" ">
+      <DialogContent className="max-w-7xl">
         <div>
           {element?.image && (
             <div className=" mx-auto text-center">
@@ -17,7 +17,7 @@ export function RequestDetails({ element }: any) {
                 className="mx-auto"
                 src={element?.image}
                 alt={element?.subject}
-                width={600}
+                width={1200}
                 height={600}
               />
             </div>

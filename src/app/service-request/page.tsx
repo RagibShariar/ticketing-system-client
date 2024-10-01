@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-// components/ContactForm.js
 import { Button } from "@/components/ui/button";
+// components/ContactForm.js
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateRequestMutation } from "@/lib/redux/api/service-request/serviceRequestApi";
+import { useCurrentToken } from "@/lib/redux/features/authSlice";
 import { useAppSelector } from "@/lib/redux/hooks";
-import withAuth from "@/lib/withAuth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -31,6 +31,7 @@ const ContactForm = () => {
   const userInfo = useAppSelector((state) => state.auth.userInfo);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const router = useRouter();
+  const token = useAppSelector(useCurrentToken);
 
   const handleFormSubmit = async (data: FieldValues) => {
     const submitData = new FormData();
@@ -69,6 +70,11 @@ const ContactForm = () => {
           duration: 1000,
         });
       }
+
+      if (!token) {
+        toast.warning("Please login to access this page");
+        router.replace("/login");
+      }
     } catch (error: any) {
       // console.log(error);
       toast.error(error?.message || "Something went wrong", {
@@ -98,9 +104,9 @@ const ContactForm = () => {
   return (
     <form
       onSubmit={handleSubmit(handleFormSubmit)}
-      className="my-20 space-y-5 max-w-5xl mx-auto "
+      className="my-20 space-y-5 max-w-5xl mx-auto px-4"
     >
-      <h2 className="text-2xl font-bold">Have any Project or Idea?</h2>
+      <h2 className="text-2xl font-bold">Create a new Service Request.</h2>
       <p>We would love to hear from you.</p>
 
       <div className="flex justify-center items-center  gap-6">
@@ -251,9 +257,14 @@ const ContactForm = () => {
         />
       </div>
 
-      <Button type="submit">Send Message</Button>
+      <Button
+        type="submit"
+        className="bg-[#041340] rounded-sm py-3 px-6 text-white"
+      >
+        Send Message
+      </Button>
     </form>
   );
 };
 
-export default withAuth(ContactForm);
+export default ContactForm;

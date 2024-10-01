@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import requestSVG from "@/assets/request.svg";
 import {
   Table,
   TableBody,
@@ -20,6 +21,8 @@ import {
 } from "@/lib/redux/features/authSlice";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { Loader2 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -83,8 +86,18 @@ export function UserServiceRequests() {
 
   if (!token || data?.data?.length === 0) {
     return (
-      <div className="min-h-[85vh]  flex items-center justify-center w-full">
-        <h1 className="text-xl font-medium"> You have no requests.</h1>
+      <div className="min-h-[85vh]  flex flex-col lg:flex-row items-center justify-center lg:justify-between max-w-7xl mx-auto gap-12">
+        <h1 className="text-xl font-medium">
+          {" "}
+          You have no requests. Create new request?
+          <Link
+            className="ml-3 text-blue-700 underline"
+            href={"/service-request"}
+          >
+            Create a new Request
+          </Link>
+        </h1>
+        <Image src={requestSVG} alt="Request" width={600} height={600} />
       </div>
     );
   }
@@ -98,14 +111,27 @@ export function UserServiceRequests() {
   }
 
   return (
-    <div className="w-full">
-      <div className="mt-2 mb-4 bg-purple-100">
+    <div>
+      {/* <div className="mt-2 mb-4 py-1 bg-purple-100 w-full">
         <h1 className="text-xl font-medium text-center">
           Welcome, {user?.name}
         </h1>
         <h2 className="text-md font-medium text-center"> {user?.email}</h2>
         <p className="text-center">role: {user?.role}</p>
-      </div>
+      </div> */}
+      {user?.role === "user" ? (
+        <div className="flex items-center justify-start p-4">
+          <h2 className="text-xl font-medium">
+            Your submitted requests are below
+          </h2>
+        </div>
+      ) : (
+        <div className="flex items-center justify-start p-4">
+          <h2 className="text-xl font-medium">
+            All Service Requests - Admin Dashboard
+          </h2>
+        </div>
+      )}
 
       {user?.role === "admin" && (
         <div className="flex items-center justify-start p-4">
@@ -169,7 +195,7 @@ export function UserServiceRequests() {
             <div>
               <button
                 type="submit"
-                className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+                className="w-full bg-[#041340] text-white px-4 py-2 rounded-md  transition"
               >
                 Search
               </button>
@@ -178,7 +204,7 @@ export function UserServiceRequests() {
         </div>
       )}
 
-      <Table className="text-md">
+      <Table className="text-md mb-14 px-10">
         <TableHeader>
           <TableRow>
             <TableHead>Ticket Id</TableHead>
@@ -202,15 +228,25 @@ export function UserServiceRequests() {
                 <TableCell>{element.user.companyName}</TableCell>
                 <TableCell>{element.user.designation}</TableCell>
                 <TableCell>{element.subject}</TableCell>
-                <TableCell className="max-w-[250px] overflow-x-auto">
-                  {element.message}
+                <TableCell>
+                  <RequestDetails element={element} />
                 </TableCell>
                 <TableCell>
-                  {element.requestTypeId === 1 ? "incident" : ""}
-                  {element.requestTypeId === 2 ? "request" : ""}
-                  {element.requestTypeId === 3 ? "change" : ""}
+                  {element.requestTypeId === 1 ? "Incident" : ""}
+                  {element.requestTypeId === 2 ? "Request" : ""}
+                  {element.requestTypeId === 3 ? "Change" : ""}
                 </TableCell>
-                <TableCell>{element.status}</TableCell>
+                <TableCell>
+                  {element.status === "pending"
+                    ? "⌛ Pending"
+                    : element.status === "in_progress"
+                    ? "🔄 In-progress"
+                    : element.status === "fulfilled"
+                    ? "✅ Fulfilled"
+                    : element.status === "cancelled"
+                    ? "❌ Cancelled"
+                    : ""}
+                </TableCell>
               </TableRow>
             ))}
 
@@ -227,17 +263,17 @@ export function UserServiceRequests() {
                   <RequestDetails element={element} />
                 </TableCell>
                 <TableCell>
-                  {element.requestTypeId === 1 ? "incident" : ""}
-                  {element.requestTypeId === 2 ? "request" : ""}
-                  {element.requestTypeId === 3 ? "change" : ""}
+                  {element.requestTypeId === 1 ? "Incident" : ""}
+                  {element.requestTypeId === 2 ? "Request" : ""}
+                  {element.requestTypeId === 3 ? "Change" : ""}
                 </TableCell>
                 <TableCell>
                   <select
                     defaultValue={element.status}
                     onChange={(e) => handleStatusChange(element.id, e)}
                   >
-                    <option value="pending">Pending</option>
-                    <option value="in_progress">⏳ In-progress</option>
+                    <option value="pending">⌛ Pending</option>
+                    <option value="in_progress">🔄 In-progress</option>
                     <option value="fulfilled">✅ Fulfilled</option>
                     <option value="cancelled">❌Cancelled</option>
                   </select>

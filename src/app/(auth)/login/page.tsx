@@ -47,9 +47,11 @@ const LoginPage = () => {
 
   return (
     <>
-      <section className="lg:mt-16 lg:w-[450px] md:w-1/2 mx-auto lg:border lg:rounded-xl lg:shadow-md ">
+      <section className="lg:mt-16 lg:w-[450px] md:w-1/2 mx-auto lg:border lg:rounded-xl lg:shadow-md md:mt-20 md:mb-20 mt-10 mb-10">
         <div className="bg-white lg:m-1 lg:rounded-lg px-4 py-5 mx-auto dark:bg-slate-900">
-          <h4 className=" text-2xl font-semibold dark:text-gray-50">Login</h4>
+          <h4 className=" text-2xl font-semibold dark:text-gray-50">
+            Welcome Back
+          </h4>
           <p className="mt-3 mb-6 text-sm font-medium text-gray-500">
             Enter your email below to login to your account
           </p>

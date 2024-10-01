@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useSignUpMutation } from "@/lib/redux/api/auth/authApi";
 import { EyeClosedIcon, EyeOpenIcon } from "@radix-ui/react-icons";
-import { CircleAlert } from "lucide-react";
+import { Armchair, Building, CircleAlert } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -65,7 +65,7 @@ const SignUp = () => {
   };
 
   return (
-    <section className=" lg:mt-16 lg:w-[550px] md:w-1/2 mx-auto lg:border lg:rounded-xl lg:shadow-md bg-gradient">
+    <section className=" lg:mt-16 lg:w-[550px] md:w-1/2 mx-auto lg:border lg:rounded-xl lg:shadow-md bg-gradient md:mt-20 md:mb-20 mt-10 mb-10">
       <div className="bg-white lg:m-1 lg:rounded-lg dark:bg-slate-900 ">
         <form
           onSubmit={handleSubmit(handleSignUp)}
@@ -163,31 +163,7 @@ const SignUp = () => {
                   className="w-full py-2.5 pl-4 pr-10 text-sm border border-gray-300 rounded outline-blue-500 dark:bg-slate-900"
                   placeholder="Enter your company name"
                 />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="#bbb"
-                  stroke="#bbb"
-                  className="absolute w-4 h-4 right-4"
-                  viewBox="0 0 682.667 682.667"
-                >
-                  <defs>
-                    <clipPath id="a" clipPathUnits="userSpaceOnUse">
-                      <path d="M0 512h512V0H0Z" />
-                    </clipPath>
-                  </defs>
-                  <g
-                    clipPath="url(#a)"
-                    transform="matrix(1.33 0 0 -1.33 0 682.667)"
-                  >
-                    <path
-                      fill="none"
-                      strokeMiterlimit="10"
-                      strokeWidth="40"
-                      d="M452 444H60c-22.091 0-40-17.909-40-40v-39.446l212.127-157.782c14.17-10.54 33.576-10.54 47.746 0L492 364.554V404c0 22.091-17.909 40-40 40Z"
-                    />
-                    <path d="M472 274.9V107.999c0-11.027-8.972-20-20-20H60c-11.028 0-20 8.973-20 20V274.9L0 304.652V107.999c0-33.084 26.916-60 60-60h392c33.084 0 60 26.916 60 60v196.653Z" />
-                  </g>
-                </svg>
+                <Building className="absolute w-4 h-4 text-[#bbb] right-4" />
               </div>
               {errors.companyName && (
                 <span className="mt-2 text-sm text-red-500 flex items-center">
@@ -208,31 +184,7 @@ const SignUp = () => {
                   className="w-full py-2.5 pl-4 pr-10 text-sm border border-gray-300 rounded outline-blue-500 dark:bg-slate-900"
                   placeholder="Enter your designation"
                 />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="#bbb"
-                  stroke="#bbb"
-                  className="absolute w-4 h-4 right-4"
-                  viewBox="0 0 682.667 682.667"
-                >
-                  <defs>
-                    <clipPath id="a" clipPathUnits="userSpaceOnUse">
-                      <path d="M0 512h512V0H0Z" />
-                    </clipPath>
-                  </defs>
-                  <g
-                    clipPath="url(#a)"
-                    transform="matrix(1.33 0 0 -1.33 0 682.667)"
-                  >
-                    <path
-                      fill="none"
-                      strokeMiterlimit="10"
-                      strokeWidth="40"
-                      d="M452 444H60c-22.091 0-40-17.909-40-40v-39.446l212.127-157.782c14.17-10.54 33.576-10.54 47.746 0L492 364.554V404c0 22.091-17.909 40-40 40Z"
-                    />
-                    <path d="M472 274.9V107.999c0-11.027-8.972-20-20-20H60c-11.028 0-20 8.973-20 20V274.9L0 304.652V107.999c0-33.084 26.916-60 60-60h392c33.084 0 60 26.916 60 60v196.653Z" />
-                  </g>
-                </svg>
+                <Armchair className="absolute w-4 h-4 text-[#bbb] right-4" />
               </div>
               {errors.designation && (
                 <span className="mt-2 text-sm text-red-500 flex items-center">

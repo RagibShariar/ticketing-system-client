@@ -5,14 +5,19 @@ import {
   useGetUserInfoQuery,
   useUpdateUserMutation,
 } from "@/lib/redux/api/user/userApi";
+import { useCurrentToken } from "@/lib/redux/features/authSlice";
+import { useAppSelector } from "@/lib/redux/hooks";
 import { Cross1Icon } from "@radix-ui/react-icons";
-import { Edit2Icon } from "lucide-react";
+import { Edit2Icon, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 const Profile = () => {
   const [isEdit, setIsEdit] = useState(false);
+  const token = useAppSelector(useCurrentToken);
+  const router = useRouter();
   const {
     data: user,
     isLoading: userLoading,
@@ -24,6 +29,11 @@ const Profile = () => {
   const handleProfileEdit = () => {
     setIsEdit(!isEdit);
   };
+
+  if (!token) {
+    toast.warning("Please login to access this page");
+    router.replace("/login");
+  }
 
   const onSubmit = async (data: FieldValues) => {
     const userData = {
@@ -46,13 +56,17 @@ const Profile = () => {
     }
   };
   if (userLoading || updateLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-[85vh] flex items-center justify-center">
+        <Loader2 size={20} className="animate-spin mr-2" /> Loading...
+      </div>
+    );
   }
 
   if (!isEdit) {
     return (
       <>
-        <div className=" p-6 max-w-7xl mx-auto rounded-xl shadow-md mt-10">
+        <div className=" p-6 max-w-7xl mx-auto rounded-xl shadow-md md:mt-20 md:mb-20">
           <div className="mb-12 flex justify-between border-b-2 border-dashed py-4">
             <p className="text-2xl font-semibold">My Profile</p>
             <button onClick={() => handleProfileEdit()}>
@@ -105,7 +119,7 @@ const Profile = () => {
   return (
     <>
       {/* ------------------------------------------------------------------ */}
-      <div className=" p-6 max-w-7xl mx-auto rounded-xl shadow-md mt-10">
+      <div className=" p-6 max-w-7xl mx-auto rounded-xl shadow-md md:mt-20 md:mb-20">
         <div className="mb-12 flex justify-between border-b-2 border-dashed py-4">
           <p className="text-2xl font-semibold">My Profile</p>
           <button onClick={() => handleProfileEdit()}>

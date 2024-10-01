@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import logo from "@/assets/logo.jpg";
 import {
   logOut,
   useCurrentToken,
@@ -43,20 +44,28 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="shadow py-2 bg-slate-100">
-      <div className="  flex items-center justify-between lg:max-w-7xl mx-auto">
-        <div>
-          <Link href={"/"}>Logo</Link>
+    <nav className="shadow py-3 bg-[#041340] text-white px-4">
+      <div className="  flex items-center justify-between lg:max-w-7xl mx-auto ">
+        <div className=" lg-ml-0">
+          <Link href={"/"}>
+            <Image
+              className="rounded-full"
+              src={logo}
+              alt="Solar-ICT"
+              width={60}
+              height={60}
+            />
+          </Link>
         </div>
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem className="font-semibold hover:text-purple-800  px-4 py-2 cursor-pointer">
-              <Link href="/contact-us">Contact Us</Link>
+              <Link href="/service-request">Service Request</Link>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
 
-        <div className="flex justify-center items-center gap-4">
+        <div className="flex justify-center items-center">
           <div>
             {!token ? (
               <div>
@@ -68,29 +77,29 @@ const Navbar = () => {
                 </Button>
               </div>
             ) : (
-              <div className="flex items-center">
-                <p> {user?.name}</p>
+              <div className="flex items-center ">
+                <div className="mr-4">
+                  <p className="hidden md:block"> {user?.name}</p>
+                </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="rounded-full hover:bg-transparent focus-visible:ring-0"
-                    >
-                      <Image
+                    <div className="rounded-full cursor-pointer w-12 h-12 bg-white flex items-center justify-center">
+                      {/* <Image
                         className="rounded-full"
                         width="40"
                         height="40"
                         src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"
                         alt={user?.name as string}
-                      />
-                    </Button>
+                      /> */}
+                      <User size={20} className="text-black" />
+                    </div>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56">
+                  <DropdownMenuContent className="w-56 ">
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
                       <Link href={"/profile"}>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer">
                           <User className="mr-2 h-4 w-4" />
                           <span>Profile</span>
                         </DropdownMenuItem>
@@ -98,7 +107,10 @@ const Navbar = () => {
                     </DropdownMenuGroup>
 
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleLogOut}>
+                    <DropdownMenuItem
+                      onClick={handleLogOut}
+                      className="cursor-pointer"
+                    >
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Log out</span>
                     </DropdownMenuItem>
