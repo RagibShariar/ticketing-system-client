@@ -81,7 +81,7 @@ const Footer = () => {
             <Phone size={16} /> +41 76 566 98 04
           </p>
           <p className="text-gray-400 text-sm flex items-center gap-1">
-            <Mail size={16} /> info@solar-ict.com
+            <Mail size={16} /> support@solar-ict.com
           </p>
         </div>
       </div>
