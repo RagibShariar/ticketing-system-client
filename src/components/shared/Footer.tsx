@@ -2,6 +2,7 @@ import "@/app/globals.css";
 import logo from "@/assets/logo.png";
 import { Mail, MapPin, Phone } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const Footer = () => {
   return (
@@ -20,7 +21,11 @@ const Footer = () => {
 
           <ul className="flex flex-wrap gap-x-5 gap-4">
             <li>
-              <a href="javascript:void(0)" className="text-xl">
+              <a
+                href="https://www.facebook.com/profile.php?id=100094100101140"
+                target="_blank"
+                className="text-xl"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="inline w-6 h-6"
@@ -41,7 +46,11 @@ const Footer = () => {
             </li>
 
             <li>
-              <a href="javascript:void(0)" className="text-xl">
+              <a
+                href="https://www.linkedin.com/company/solar-i-c-t"
+                target="_blank"
+                className="text-xl"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="inline w-6 h-6"
@@ -69,19 +78,33 @@ const Footer = () => {
 
         <div className="space-y-4">
           <div className="text-lg font-semibold mb-6 text-white">
-            <Image src={logo} alt="logo" width={70} height={60} />
+            <Link href={"/"}>
+              <Image src={logo} alt="logo" width={70} height={60} />
+            </Link>
           </div>
-          <p className="text-gray-400 text-sm flex items-center gap-1">
+          <p className="text-gray-400 text-sm flex items-center gap-2">
             <MapPin size={16} /> Rue du Jura 3, 1023 Crissier, Switzerland
           </p>
-          <p className="text-gray-400 text-sm flex items-center gap-1">
-            <Phone size={16} /> +41 21 561 53 15
+          <p className="text-gray-400 text-sm">
+            <a className=" flex items-center gap-2" href="tel:+41215615315">
+              <Phone size={16} /> +41 21 561 53 15
+            </a>
           </p>
-          <p className="text-gray-400 text-sm flex items-center gap-1">
-            <Phone size={16} /> +41 76 566 98 04
+          <p className="text-gray-400 text-sm">
+            <a
+              className=" flex items-center gap-2"
+              href="https://wa.me/41765669804"
+            >
+              <Phone size={16} /> +41 76 566 98 04
+            </a>
           </p>
-          <p className="text-gray-400 text-sm flex items-center gap-1">
-            <Mail size={16} /> support@solar-ict.com
+          <p className="text-gray-400 text-sm ">
+            <a
+              className="flex items-center gap-2"
+              href="mailto:support@solar-ict.com"
+            >
+              <Mail size={16} /> support@solar-ict.com
+            </a>
           </p>
         </div>
       </div>

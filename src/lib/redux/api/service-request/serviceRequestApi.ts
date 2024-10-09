@@ -8,12 +8,14 @@ const serviceRequestApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["ServiceRequest"],
     }),
     viewServices: builder.query({
       query: () => ({
         url: `/service-request`,
         method: "GET",
       }),
+      providesTags: ["ServiceRequest"],
     }),
     viewAllServices: builder.query({
       query: ({ email, id, days }) => {
@@ -31,6 +33,7 @@ const serviceRequestApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
+      providesTags: ["ServiceRequest"],
     }),
     changeStatus: builder.mutation({
       query: ({ id, status }) => ({
@@ -38,6 +41,14 @@ const serviceRequestApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: { id, status },
       }),
+      invalidatesTags: ["ServiceRequest"],
+    }),
+    viewServiceById: builder.query({
+      query: (id) => ({
+        url: `/service-request/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["ServiceRequest"],
     }),
   }),
 });
@@ -48,4 +59,5 @@ export const {
   useViewAllServicesQuery,
   useLazyViewAllServicesQuery,
   useChangeStatusMutation,
+  useViewServiceByIdQuery,
 } = serviceRequestApi;

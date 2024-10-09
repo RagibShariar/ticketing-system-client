@@ -20,15 +20,17 @@ import {
   useCurrentUser,
 } from "@/lib/redux/features/authSlice";
 import { useAppSelector } from "@/lib/redux/hooks";
+import { formatDate } from "@/utils/formatDate";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { RequestDetails } from "./RequestDetails";
 
 export function UserServiceRequests() {
+  const router = useRouter();
   const token = useAppSelector(useCurrentToken);
   const user = useAppSelector(useCurrentUser);
 
@@ -206,30 +208,33 @@ export function UserServiceRequests() {
 
       <Table className="text-md mb-14 px-10">
         <TableHeader>
-          <TableRow>
+          <TableRow className="bg-slate-200 hover:bg-slate-200">
             <TableHead>Ticket Id</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Company Name</TableHead>
             <TableHead>Designation</TableHead>
             <TableHead>Subject</TableHead>
-            <TableHead>Details</TableHead>
             <TableHead>Request Type</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Date Created</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {user?.role === "user" &&
             data?.data?.map((element: any) => (
-              <TableRow key={element.id}>
-                <TableCell>{element.id}</TableCell>
+              <TableRow
+                className="cursor-pointer"
+                key={element.id}
+                onClick={() => router.push(`/service-details/${element.id}`)}
+              >
+                <TableCell>#{element.id}</TableCell>
                 <TableCell className="font-medium">{element.name}</TableCell>
                 <TableCell>{element.email}</TableCell>
                 <TableCell>{element.user.companyName}</TableCell>
                 <TableCell>{element.user.designation}</TableCell>
-                <TableCell>{element.subject}</TableCell>
-                <TableCell>
-                  <RequestDetails element={element} />
+                <TableCell className="font-semibold">
+                  {element.subject}
                 </TableCell>
                 <TableCell>
                   {element.requestTypeId === 1 ? "Incident" : ""}
@@ -247,30 +252,35 @@ export function UserServiceRequests() {
                     ? "❌ Cancelled"
                     : ""}
                 </TableCell>
+                <TableCell>{formatDate(element.createdAt)} </TableCell>
               </TableRow>
             ))}
 
           {user?.role === "admin" &&
             allData?.data?.map((element: any) => (
-              <TableRow key={element.id}>
+              <TableRow
+                key={element.id}
+                className="cursor-pointer"
+                onClick={() => router.push(`/service-details/${element.id}`)}
+              >
                 <TableCell>{element.id}</TableCell>
                 <TableCell className="font-medium">{element.name}</TableCell>
                 <TableCell>{element.email}</TableCell>
                 <TableCell>{element.user.companyName}</TableCell>
                 <TableCell>{element.user.designation}</TableCell>
                 <TableCell className="font-medium">{element.subject}</TableCell>
-                <TableCell>
-                  <RequestDetails element={element} />
-                </TableCell>
+
                 <TableCell>
                   {element.requestTypeId === 1 ? "Incident" : ""}
                   {element.requestTypeId === 2 ? "Request" : ""}
                   {element.requestTypeId === 3 ? "Change" : ""}
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={(e) => e.stopPropagation()}>
                   <select
                     defaultValue={element.status}
-                    onChange={(e) => handleStatusChange(element.id, e)}
+                    onChange={(e) => {
+                      handleStatusChange(element.id, e);
+                    }}
                   >
                     <option value="pending">⌛ Pending</option>
                     <option value="in_progress">🔄 In-progress</option>
@@ -278,6 +288,7 @@ export function UserServiceRequests() {
                     <option value="cancelled">❌Cancelled</option>
                   </select>
                 </TableCell>
+                <TableCell>{formatDate(element.createdAt)} </TableCell>
               </TableRow>
             ))}
         </TableBody>

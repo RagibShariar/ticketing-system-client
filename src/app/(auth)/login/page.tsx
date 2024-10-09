@@ -56,7 +56,7 @@ const LoginPage = () => {
             Enter your email below to login to your account
           </p>
 
-          <form onClick={handleSubmit(handleLogin)} className=" ">
+          <form onSubmit={handleSubmit(handleLogin)} className=" ">
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>

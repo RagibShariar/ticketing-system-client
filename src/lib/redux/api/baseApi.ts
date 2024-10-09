@@ -2,8 +2,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 
 const baseQuery = fetchBaseQuery({
-  // baseUrl: "http://localhost:5000/api",
-  baseUrl: `https://ticketserver.labontest.tech/api`,
+  baseUrl: "http://localhost:5000/api",
+  // baseUrl: `https://ticketserver.labontest.tech/api`,
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
@@ -18,6 +18,6 @@ const baseQuery = fetchBaseQuery({
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQuery,
-  tagTypes: [],
+  tagTypes: ["ServiceRequest", "AdditionalInformation"],
   endpoints: () => ({}),
 });
