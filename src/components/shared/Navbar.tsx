@@ -59,7 +59,7 @@ const Navbar = () => {
         </div>
         <NavigationMenu>
           <NavigationMenuList>
-            <NavigationMenuItem className="font-semibold hover:text-purple-800  px-4 py-2 cursor-pointer">
+            <NavigationMenuItem className="font-semibold   px-4 py-2 cursor-pointer">
               <Link href="/service-request">Service Request</Link>
             </NavigationMenuItem>
           </NavigationMenuList>

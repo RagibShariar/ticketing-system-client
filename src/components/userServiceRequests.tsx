@@ -113,186 +113,187 @@ export function UserServiceRequests() {
   }
 
   return (
-    <div>
-      {/* <div className="mt-2 mb-4 py-1 bg-purple-100 w-full">
+    <div className="bg-gray-100 py-10">
+      <div className="max-w-7xl mx-auto  bg-white rounded-lg p-4">
+        {/* <div className="mt-2 mb-4 py-1 bg-purple-100 w-full">
         <h1 className="text-xl font-medium text-center">
           Welcome, {user?.name}
         </h1>
         <h2 className="text-md font-medium text-center"> {user?.email}</h2>
         <p className="text-center">role: {user?.role}</p>
       </div> */}
-      {user?.role === "user" ? (
-        <div className="flex items-center justify-start p-4">
-          <h2 className="text-xl font-medium">
-            Your submitted requests are below
-          </h2>
-        </div>
-      ) : (
-        <div className="flex items-center justify-start p-4">
-          <h2 className="text-xl font-medium">
-            All Service Requests - Admin Dashboard
-          </h2>
-        </div>
-      )}
+        {user?.role === "user" ? (
+          <div className="flex items-center justify-start p-4">
+            <h2 className="text-xl font-medium">
+              Your submitted requests are below
+            </h2>
+          </div>
+        ) : (
+          <div className="flex items-center justify-start p-4">
+            <h2 className="text-xl font-medium">
+              All Service Requests - Admin Dashboard
+            </h2>
+          </div>
+        )}
 
-      {user?.role === "admin" && (
-        <div className="flex items-center justify-start p-4">
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex space-x-4 items-center"
-          >
-            {/* Filter by Select */}
-            <div>
-              <select
-                defaultValue="all"
-                className="p-2 border border-gray-300 rounded-md"
-                onChange={(e) => setFilterBy(e.target.value)}
-              >
-                <option value="all">All</option>
-                <option value="email">Email</option>
-                <option value="ticketId">Ticket ID</option>
-              </select>
-            </div>
+        {user?.role === "admin" && (
+          <div className="flex items-center justify-start p-4">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="flex space-x-4 items-center"
+            >
+              {/* Filter by Select */}
+              <div>
+                <select
+                  defaultValue="all"
+                  className="p-2 border border-gray-300 rounded-md"
+                  onChange={(e) => setFilterBy(e.target.value)}
+                >
+                  <option value="all">All</option>
+                  <option value="email">Email</option>
+                  <option value="ticketId">Ticket ID</option>
+                </select>
+              </div>
 
-            {/* Email Input - Show only if "email" is selected */}
-            {filterBy === "email" && (
+              {/* Email Input - Show only if "email" is selected */}
+              {filterBy === "email" && (
+                <div>
+                  <input
+                    type="email"
+                    id="email"
+                    className="block w-full p-2 border border-gray-300 rounded-md"
+                    placeholder="Enter email"
+                    {...register("email", { required: filterBy === "email" })}
+                  />
+                </div>
+              )}
+
+              {/* Ticket ID Input - Show only if "ticketId" is selected */}
+              {filterBy === "ticketId" && (
+                <div>
+                  <input
+                    type="text"
+                    id="ticketId"
+                    className="block w-full p-2 border border-gray-300 rounded-md"
+                    placeholder="Enter Ticket ID"
+                    {...register("ticketId", {
+                      required: filterBy === "ticketId",
+                    })}
+                  />
+                </div>
+              )}
+
+              {/* Days Filter Input */}
               <div>
                 <input
-                  type="email"
-                  id="email"
+                  type="number"
+                  id="days"
                   className="block w-full p-2 border border-gray-300 rounded-md"
-                  placeholder="Enter email"
-                  {...register("email", { required: filterBy === "email" })}
+                  placeholder="Enter days"
+                  {...register("days")}
                 />
               </div>
-            )}
 
-            {/* Ticket ID Input - Show only if "ticketId" is selected */}
-            {filterBy === "ticketId" && (
+              {/* Submit Button */}
               <div>
-                <input
-                  type="text"
-                  id="ticketId"
-                  className="block w-full p-2 border border-gray-300 rounded-md"
-                  placeholder="Enter Ticket ID"
-                  {...register("ticketId", {
-                    required: filterBy === "ticketId",
-                  })}
-                />
+                <button
+                  type="submit"
+                  className="w-full bg-[#041340] text-white px-4 py-2 rounded-md  transition"
+                >
+                  Search
+                </button>
               </div>
-            )}
+            </form>
+          </div>
+        )}
 
-            {/* Days Filter Input */}
-            <div>
-              <input
-                type="number"
-                id="days"
-                className="block w-full p-2 border border-gray-300 rounded-md"
-                placeholder="Enter days"
-                {...register("days")}
-              />
-            </div>
+        <Table className="text-md mb-14 px-10">
+          <TableHeader>
+            <TableRow className="bg-slate-200 hover:bg-slate-200">
+              <TableHead>Ticket Id</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
 
-            {/* Submit Button */}
-            <div>
-              <button
-                type="submit"
-                className="w-full bg-[#041340] text-white px-4 py-2 rounded-md  transition"
-              >
-                Search
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
+              <TableHead>Subject</TableHead>
+              <TableHead>Request Type</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Date Created</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {user?.role === "user" &&
+              data?.data?.map((element: any) => (
+                <TableRow
+                  className="cursor-pointer"
+                  key={element.id}
+                  onClick={() => router.push(`/service-details/${element.id}`)}
+                >
+                  <TableCell>#{element.id}</TableCell>
+                  <TableCell className="font-medium">{element.name}</TableCell>
+                  <TableCell>{element.email}</TableCell>
 
-      <Table className="text-md mb-14 px-10">
-        <TableHeader>
-          <TableRow className="bg-slate-200 hover:bg-slate-200">
-            <TableHead>Ticket Id</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Company Name</TableHead>
-            <TableHead>Designation</TableHead>
-            <TableHead>Subject</TableHead>
-            <TableHead>Request Type</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Date Created</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {user?.role === "user" &&
-            data?.data?.map((element: any) => (
-              <TableRow
-                className="cursor-pointer"
-                key={element.id}
-                onClick={() => router.push(`/service-details/${element.id}`)}
-              >
-                <TableCell>#{element.id}</TableCell>
-                <TableCell className="font-medium">{element.name}</TableCell>
-                <TableCell>{element.email}</TableCell>
-                <TableCell>{element.user.companyName}</TableCell>
-                <TableCell>{element.user.designation}</TableCell>
-                <TableCell className="font-semibold">
-                  {element.subject}
-                </TableCell>
-                <TableCell>
-                  {element.requestTypeId === 1 ? "Incident" : ""}
-                  {element.requestTypeId === 2 ? "Request" : ""}
-                  {element.requestTypeId === 3 ? "Change" : ""}
-                </TableCell>
-                <TableCell>
-                  {element.status === "pending"
-                    ? "⌛ Pending"
-                    : element.status === "in_progress"
-                    ? "🔄 In-progress"
-                    : element.status === "fulfilled"
-                    ? "✅ Fulfilled"
-                    : element.status === "cancelled"
-                    ? "❌ Cancelled"
-                    : ""}
-                </TableCell>
-                <TableCell>{formatDate(element.createdAt)} </TableCell>
-              </TableRow>
-            ))}
+                  <TableCell className="font-semibold">
+                    {element.subject}
+                  </TableCell>
+                  <TableCell>
+                    {element.requestTypeId === 1 ? "Incident" : ""}
+                    {element.requestTypeId === 2 ? "Request" : ""}
+                    {element.requestTypeId === 3 ? "Change" : ""}
+                  </TableCell>
+                  <TableCell>
+                    {element.status === "pending"
+                      ? "⌛ Pending"
+                      : element.status === "in_progress"
+                      ? "🔄 In-progress"
+                      : element.status === "fulfilled"
+                      ? "✅ Fulfilled"
+                      : element.status === "cancelled"
+                      ? "❌ Cancelled"
+                      : ""}
+                  </TableCell>
+                  <TableCell>{formatDate(element.createdAt)} </TableCell>
+                </TableRow>
+              ))}
 
-          {user?.role === "admin" &&
-            allData?.data?.map((element: any) => (
-              <TableRow
-                key={element.id}
-                className="cursor-pointer"
-                onClick={() => router.push(`/service-details/${element.id}`)}
-              >
-                <TableCell>{element.id}</TableCell>
-                <TableCell className="font-medium">{element.name}</TableCell>
-                <TableCell>{element.email}</TableCell>
-                <TableCell>{element.user.companyName}</TableCell>
-                <TableCell>{element.user.designation}</TableCell>
-                <TableCell className="font-medium">{element.subject}</TableCell>
+            {user?.role === "admin" &&
+              allData?.data?.map((element: any) => (
+                <TableRow
+                  key={element.id}
+                  className="cursor-pointer"
+                  onClick={() => router.push(`/service-details/${element.id}`)}
+                >
+                  <TableCell>#{element.id}</TableCell>
+                  <TableCell className="font-medium">{element.name}</TableCell>
+                  <TableCell>{element.email}</TableCell>
 
-                <TableCell>
-                  {element.requestTypeId === 1 ? "Incident" : ""}
-                  {element.requestTypeId === 2 ? "Request" : ""}
-                  {element.requestTypeId === 3 ? "Change" : ""}
-                </TableCell>
-                <TableCell onClick={(e) => e.stopPropagation()}>
-                  <select
-                    defaultValue={element.status}
-                    onChange={(e) => {
-                      handleStatusChange(element.id, e);
-                    }}
-                  >
-                    <option value="pending">⌛ Pending</option>
-                    <option value="in_progress">🔄 In-progress</option>
-                    <option value="fulfilled">✅ Fulfilled</option>
-                    <option value="cancelled">❌Cancelled</option>
-                  </select>
-                </TableCell>
-                <TableCell>{formatDate(element.createdAt)} </TableCell>
-              </TableRow>
-            ))}
-        </TableBody>
-      </Table>
+                  <TableCell className="font-medium">
+                    {element.subject}
+                  </TableCell>
+
+                  <TableCell>
+                    {element.requestTypeId === 1 ? "Incident" : ""}
+                    {element.requestTypeId === 2 ? "Request" : ""}
+                    {element.requestTypeId === 3 ? "Change" : ""}
+                  </TableCell>
+                  <TableCell onClick={(e) => e.stopPropagation()}>
+                    <select
+                      defaultValue={element.status}
+                      onChange={(e) => {
+                        handleStatusChange(element.id, e);
+                      }}
+                    >
+                      <option value="pending">⌛ Pending</option>
+                      <option value="in_progress">🔄 In-progress</option>
+                      <option value="fulfilled">✅ Fulfilled</option>
+                      <option value="cancelled">❌Cancelled</option>
+                    </select>
+                  </TableCell>
+                  <TableCell>{formatDate(element.createdAt)} </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }
