@@ -24,7 +24,7 @@ import { toast } from "sonner";
 // Dummy comments data (You can replace this with dynamic data later)
 
 const ServiceDetailsPage = () => {
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const { register, handleSubmit } = useForm();
   const { serviceId } = useParams();
   const { data, isLoading } = useViewServiceByIdQuery(serviceId);
@@ -54,33 +54,39 @@ const ServiceDetailsPage = () => {
 
   // Handle file input change and set image preview
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImagePreview(reader.result as string); // Set the image preview URL
-      };
-      reader.readAsDataURL(file); // Read the image file as a data URL
+    const files = event.target.files;
+    if (files) {
+      const fileArray = Array.from(files);
+      const previewUrls = fileArray.map((file) => URL.createObjectURL(file));
+      setImagePreviews(previewUrls); // Store all image previews
+
+      // If you want to revoke URLs after usage, you can:
+      // fileArray.forEach(file => URL.revokeObjectURL(file));
     } else {
-      setImagePreview(null); // Clear preview if no file is selected
+      setImagePreviews([]); // Clear previews if no files are selected
     }
   };
 
   const handleImage = async (data: FieldValues) => {
     const submitData = new FormData();
 
-    // Append image file if it exists
+    // Append all selected image files
     if (data.image && data.image.length > 0) {
-      submitData.append("image", data.image[0]); // Get the first image file
+      for (let i = 0; i < data.image.length; i++) {
+        submitData.append("image", data.image[i]);
+      }
     }
 
-    const toastId = toast.loading("Uploading image...");
+    const toastId = toast.loading("Uploading images...");
     try {
       const res = await updateServiceRequest({ serviceId, submitData });
 
       if (res?.data?.success) {
         toast.success(res?.data?.message, { id: toastId });
       }
+
+      // Clear image previews
+      setImagePreviews([]);
     } catch (error) {
       toast.error("Something went wrong. Try again later.", { id: toastId });
     }
@@ -119,11 +125,17 @@ const ServiceDetailsPage = () => {
                     return (
                       <a
                         key={index}
-                        className="text-blue-700 hover:text-blue-900 font-medium underline"
+                        className="text-blue-700 hover:text-blue-900  underline"
                         target="_blank"
                         href={image}
                       >
-                        View Attachment
+                        ({index + 1}) View Attachment
+                        {/* <Image
+                          src={image}
+                          width={100}
+                          height={100}
+                          alt="Attachment"
+                        ></Image> */}
                       </a>
                     );
                   })}
@@ -133,46 +145,54 @@ const ServiceDetailsPage = () => {
           </div>
 
           {/* Additional image upload */}
-          <div className="p-6 border-t border-gray-200">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              Add Additional Image
-            </h2>
-            <form
-              onSubmit={handleSubmit(handleImage)}
-              className="grid w-full  items-center gap-1.5 "
-            >
-              <Label htmlFor="image">Image</Label>
-              <Input
-                {...register("image")}
-                className="grid w-full items-center gap-1.5 shadow-none rounded-none  border-gray-400 "
-                id="image"
-                type="file"
-                accept="image/*" // Restrict file input to images only
-                onChange={handleImageChange} // Handle file change to show preview
-              />
-              {/* Image Preview */}
-              {imagePreview && (
-                <div>
-                  <div className="mt-4">
-                    <p>Image Preview:</p>
-                    <Image
-                      src={imagePreview}
-                      alt="Preview"
-                      width={500}
-                      height={200}
-                      className="h-40 w-40 object-cover"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="mt-4 bg-[#041340] text-white px-10 py-2 rounded-sm"
-                  >
-                    Add Attachment
-                  </button>
-                </div>
-              )}
-            </form>
-          </div>
+          {data?.data?.status !== "fulfilled" &&
+            data?.data?.status !== "cancelled" && (
+              <div className="p-6 border-t border-gray-200">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                  Add Additional Image
+                </h2>
+                <form
+                  onSubmit={handleSubmit(handleImage)}
+                  className="grid w-full  items-center gap-1.5 "
+                >
+                  <Label htmlFor="image">Image</Label>
+                  <Input
+                    {...register("image")}
+                    className="grid w-full items-center gap-1.5 shadow-none rounded-none  border-gray-400 "
+                    id="image"
+                    type="file"
+                    accept="image/*" // Restrict file input to images only
+                    multiple
+                    onChange={handleImageChange} // Handle file change to show preview
+                  />
+                  {/* Image Preview */}
+                  {imagePreviews.length > 0 && (
+                    <div className="mt-4">
+                      <p>Image Previews:</p>
+                      <div className="flex gap-4">
+                        {imagePreviews.map((preview, index) => (
+                          <Image
+                            key={index}
+                            src={preview}
+                            alt={`Preview ${index + 1}`}
+                            width={500}
+                            height={200}
+                            className="h-40 w-40 object-cover"
+                          />
+                        ))}
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="mt-4 bg-[#041340] text-white px-10 py-2 rounded-sm"
+                      >
+                        Add Attachments
+                      </button>
+                    </div>
+                  )}
+                </form>
+              </div>
+            )}
 
           {/* Comments Section */}
           <div className="p-6 border-t border-gray-200">

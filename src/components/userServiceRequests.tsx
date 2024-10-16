@@ -115,13 +115,6 @@ export function UserServiceRequests() {
   return (
     <div className="bg-gray-100 py-10">
       <div className="max-w-7xl mx-auto  bg-white rounded-lg p-4">
-        {/* <div className="mt-2 mb-4 py-1 bg-purple-100 w-full">
-        <h1 className="text-xl font-medium text-center">
-          Welcome, {user?.name}
-        </h1>
-        <h2 className="text-md font-medium text-center"> {user?.email}</h2>
-        <p className="text-center">role: {user?.role}</p>
-      </div> */}
         {user?.role === "user" ? (
           <div className="flex items-center justify-start p-4">
             <h2 className="text-xl font-medium">
@@ -246,7 +239,7 @@ export function UserServiceRequests() {
                       : element.status === "in_progress"
                       ? "🔄 In-progress"
                       : element.status === "fulfilled"
-                      ? "✅ Fulfilled"
+                      ? "✅ Resolved"
                       : element.status === "cancelled"
                       ? "❌ Cancelled"
                       : ""}
@@ -284,7 +277,7 @@ export function UserServiceRequests() {
                     >
                       <option value="pending">⌛ Pending</option>
                       <option value="in_progress">🔄 In-progress</option>
-                      <option value="fulfilled">✅ Fulfilled</option>
+                      <option value="fulfilled">✅ Resolved</option>
                       <option value="cancelled">❌Cancelled</option>
                     </select>
                   </TableCell>
