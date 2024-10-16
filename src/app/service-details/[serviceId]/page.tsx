@@ -1,26 +1,37 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   useAddAdditionalInformationMutation,
   useViewAdditionalInformationQuery,
 } from "@/lib/redux/api/additional-information/additionalInformationApi";
-import { useViewServiceByIdQuery } from "@/lib/redux/api/service-request/serviceRequestApi";
+import {
+  useUpdateServiceRequestMutation,
+  useViewServiceByIdQuery,
+} from "@/lib/redux/api/service-request/serviceRequestApi";
 import withAuth from "@/lib/withAuth";
 import { formatDate } from "@/utils/formatDate";
 import { Loader2 } from "lucide-react";
+import Image from "next/image";
 import { useParams } from "next/navigation";
-import { FieldValues } from "react-hook-form";
+import { useState } from "react";
+import { FieldValues, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 // Dummy comments data (You can replace this with dynamic data later)
 
 const ServiceDetailsPage = () => {
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const { register, handleSubmit } = useForm();
   const { serviceId } = useParams();
   const { data, isLoading } = useViewServiceByIdQuery(serviceId);
   const [addAdditionalInformation] = useAddAdditionalInformationMutation();
   const { data: additionalInformation } =
     useViewAdditionalInformationQuery(serviceId);
+  const [updateServiceRequest] = useUpdateServiceRequestMutation();
 
   const handleAddComment = async (e: FieldValues) => {
     e.preventDefault();
@@ -38,6 +49,40 @@ const ServiceDetailsPage = () => {
       e.target.reset();
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  // Handle file input change and set image preview
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImagePreview(reader.result as string); // Set the image preview URL
+      };
+      reader.readAsDataURL(file); // Read the image file as a data URL
+    } else {
+      setImagePreview(null); // Clear preview if no file is selected
+    }
+  };
+
+  const handleImage = async (data: FieldValues) => {
+    const submitData = new FormData();
+
+    // Append image file if it exists
+    if (data.image && data.image.length > 0) {
+      submitData.append("image", data.image[0]); // Get the first image file
+    }
+
+    const toastId = toast.loading("Uploading image...");
+    try {
+      const res = await updateServiceRequest({ serviceId, submitData });
+
+      if (res?.data?.success) {
+        toast.success(res?.data?.message, { id: toastId });
+      }
+    } catch (error) {
+      toast.error("Something went wrong. Try again later.", { id: toastId });
     }
   };
 
@@ -67,39 +112,66 @@ const ServiceDetailsPage = () => {
 
             <p className="mt-4 text-gray-600">{data?.data.message}</p>
 
-            {/* <div className="mt-4 flex items-center text-gray-700">
-              <svg
-                className="h-6 w-6 text-blue-500 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 10h18M3 6h18M3 14h18M3 18h18"
-                />
-              </svg>
-              <span className="capitalize">
-                Request type: {data?.data.requestType.type}
-              </span>
-            </div> */}
-
-            {data?.data.image && (
+            {data?.data.images && (
               <div className="mt-4 ">
-                <p>
-                  <a
-                    className="text-blue-700 hover:text-blue-900 font-medium underline"
-                    target="_blank"
-                    href={data?.data.image}
-                  >
-                    View Attachment
-                  </a>
+                <p className="flex flex-wrap gap-4">
+                  {data?.data.images.map((image: string, index: number) => {
+                    return (
+                      <a
+                        key={index}
+                        className="text-blue-700 hover:text-blue-900 font-medium underline"
+                        target="_blank"
+                        href={image}
+                      >
+                        View Attachment
+                      </a>
+                    );
+                  })}
                 </p>
               </div>
             )}
+          </div>
+
+          {/* Additional image upload */}
+          <div className="p-6 border-t border-gray-200">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Add Additional Image
+            </h2>
+            <form
+              onSubmit={handleSubmit(handleImage)}
+              className="grid w-full  items-center gap-1.5 "
+            >
+              <Label htmlFor="image">Image</Label>
+              <Input
+                {...register("image")}
+                className="grid w-full items-center gap-1.5 shadow-none rounded-none  border-gray-400 "
+                id="image"
+                type="file"
+                accept="image/*" // Restrict file input to images only
+                onChange={handleImageChange} // Handle file change to show preview
+              />
+              {/* Image Preview */}
+              {imagePreview && (
+                <div>
+                  <div className="mt-4">
+                    <p>Image Preview:</p>
+                    <Image
+                      src={imagePreview}
+                      alt="Preview"
+                      width={500}
+                      height={200}
+                      className="h-40 w-40 object-cover"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="mt-4 bg-[#041340] text-white px-10 py-2 rounded-sm"
+                  >
+                    Add Attachment
+                  </button>
+                </div>
+              )}
+            </form>
           </div>
 
           {/* Comments Section */}
@@ -168,7 +240,7 @@ const ServiceDetailsPage = () => {
         {/* User Information */}
         <div className="h-fit p-6 border-t border-gray-200 rounded-lg  lg:col-span-4 bg-white mt-4 lg:mt-0">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-            Ticket Info
+            User Info
           </h2>
 
           <div>
@@ -180,16 +252,14 @@ const ServiceDetailsPage = () => {
               {data?.data?.user.email}
             </p>
           </div>
-          <div>
-            <p className="text-gray-700 mb-2">
-              <span className="font-medium">Company:</span>{" "}
-              {data?.data?.user.companyName}
-            </p>
-            <p className="text-gray-700 mb-2">
-              <span className="font-medium">Designation:</span>{" "}
-              {data?.data?.user.designation}
-            </p>
-          </div>
+          <p className="text-gray-700 mb-2">
+            <span className="font-medium">Company:</span>{" "}
+            {data?.data?.user.companyName}
+          </p>
+          <p className="text-gray-700 mb-2">
+            <span className="font-medium">Designation:</span>{" "}
+            {data?.data?.user.designation}
+          </p>
         </div>
       </div>
     </div>

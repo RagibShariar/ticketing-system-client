@@ -15,6 +15,10 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateRequestMutation } from "@/lib/redux/api/service-request/serviceRequestApi";
+import {
+  useGetEmailSuggestionsQuery,
+  useLazyGetUserDetailsQuery,
+} from "@/lib/redux/api/user/userApi";
 import { useCurrentToken } from "@/lib/redux/features/authSlice";
 import { useAppSelector } from "@/lib/redux/hooks";
 import Image from "next/image";
@@ -32,6 +36,37 @@ const ContactForm = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const router = useRouter();
   const token = useAppSelector(useCurrentToken);
+  const [suggestions, setSuggestions] = useState([]);
+  const [triggerGetUserDetails] = useLazyGetUserDetailsQuery();
+  const [email, setEmail] = useState("");
+
+  const { data: emailSuggestions } = useGetEmailSuggestionsQuery(email, {
+    skip: !email,
+  });
+
+  const handleEmailChange = (event: { target: { value: any } }) => {
+    const email = event.target.value;
+    setEmail(email);
+    if (email) {
+      // Fetch suggestions based on the email input
+      setSuggestions(emailSuggestions || []);
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const handleEmailSelect = (selectedEmail: never) => {
+    setValue("email", selectedEmail);
+    setSuggestions([]);
+    triggerGetUserDetails(selectedEmail).then((response) => {
+      if (response.data) {
+        const { name, companyName, designation } = response.data;
+        setValue("name", name);
+        setValue("companyName", companyName);
+        setValue("designation", designation);
+      }
+    });
+  };
 
   const handleFormSubmit = async (data: FieldValues) => {
     const submitData = new FormData();
@@ -60,12 +95,12 @@ const ContactForm = () => {
     const toastId = toast.loading("Sending data...");
     try {
       const res = await createRequest(submitData);
-
+      // console.log(res.error);
       if (res?.data?.success) {
         toast.success(res?.data?.message, { id: toastId, duration: 1000 });
         router.push("/message-sent-success"); // Redirect to the success page
       } else {
-        toast.error(res?.data?.message || "Something went wrong. Try again", {
+        toast.error(`"${data.email}" is not registered`, {
           id: toastId,
           duration: 1000,
         });
@@ -76,7 +111,7 @@ const ContactForm = () => {
         router.replace("/login");
       }
     } catch (error: any) {
-      // console.log(error);
+      console.log(error);
       toast.error(error?.message || "Something went wrong", {
         id: toastId,
       });
@@ -118,22 +153,36 @@ const ContactForm = () => {
             className="text-md py-6 rounded-none shadow-none  border-gray-400"
             type="text"
             id="name"
-            value={userInfo?.name}
+            value={userInfo?.role === "user" ? userInfo?.name : undefined}
             {...register("name", { required: true })}
           />
         </div>
 
-        <div className="w-full">
+        <div className="w-full relative">
           <Label htmlFor="email">
             Email <span className="text-red-500">*</span>
           </Label>
           <Input
-            className="text-md py-6 rounded-none shadow-none  border-gray-400"
+            className=" text-md py-6 rounded-none shadow-none  border-gray-400"
             type="email"
             id="email"
-            value={userInfo?.email}
+            value={userInfo?.role === "user" ? userInfo?.email : undefined}
             {...register("email", { required: true })}
+            onChange={handleEmailChange}
           />
+          {suggestions.length > 0 && (
+            <ul className="suggestions-list absolute bg-white w-full  border cursor-pointer z-50">
+              {suggestions.map((email) => (
+                <li
+                  key={email}
+                  onClick={() => handleEmailSelect(email)}
+                  className="py-2 px-3 border border-gray-400 bg-blue-200 hover:bg-gray-200"
+                >
+                  {email}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
 
@@ -146,7 +195,9 @@ const ContactForm = () => {
             className="text-md py-6 rounded-none shadow-none  border-gray-400"
             type="text"
             id="companyName"
-            value={userInfo?.companyName}
+            value={
+              userInfo?.role === "user" ? userInfo?.companyName : undefined
+            }
             {...register("companyName", { required: true })}
           />
         </div>
@@ -159,7 +210,9 @@ const ContactForm = () => {
             className="text-md py-6 rounded-none shadow-none  border-gray-400"
             type="text"
             id="designation"
-            value={userInfo?.designation}
+            value={
+              userInfo?.role === "user" ? userInfo?.designation : undefined
+            }
             {...register("designation", { required: true })}
           />
         </div>

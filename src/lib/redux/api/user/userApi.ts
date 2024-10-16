@@ -15,7 +15,18 @@ const userApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    getEmailSuggestions: builder.query({
+      query: (email) => `user/suggestions?email=${email}`,
+    }),
+    getUserDetails: builder.query({
+      query: (email) => `user/details?email=${email}`,
+    }),
   }),
 });
 
-export const { useUpdateUserMutation, useGetUserInfoQuery } = userApi;
+export const {
+  useUpdateUserMutation,
+  useGetUserInfoQuery,
+  useGetEmailSuggestionsQuery,
+  useLazyGetUserDetailsQuery,
+} = userApi;

@@ -50,6 +50,14 @@ const serviceRequestApi = baseApi.injectEndpoints({
       }),
       providesTags: ["ServiceRequest"],
     }),
+    updateServiceRequest: builder.mutation({
+      query: ({ serviceId, submitData }) => ({
+        url: `/service-request/${serviceId}`,
+        method: "PATCH",
+        body: submitData,
+      }),
+      invalidatesTags: ["ServiceRequest"],
+    }),
   }),
 });
 
@@ -60,4 +68,5 @@ export const {
   useLazyViewAllServicesQuery,
   useChangeStatusMutation,
   useViewServiceByIdQuery,
+  useUpdateServiceRequestMutation,
 } = serviceRequestApi;
