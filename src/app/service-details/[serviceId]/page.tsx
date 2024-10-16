@@ -238,7 +238,7 @@ const ServiceDetailsPage = () => {
           </div>
         </div>
         {/* User Information */}
-        <div className="h-fit p-6 border-t border-gray-200 rounded-lg  lg:col-span-4 bg-white mt-4 lg:mt-0">
+        <div className="h-full  p-6 border-t border-gray-200 rounded-lg  lg:col-span-4 bg-white mt-4 lg:mt-0">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
             User Info
           </h2>
