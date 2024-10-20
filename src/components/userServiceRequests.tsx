@@ -234,11 +234,13 @@ export function UserServiceRequests() {
                     {element.requestTypeId === 3 ? "Change" : ""}
                   </TableCell>
                   <TableCell>
-                    {element.status === "pending"
+                    {element.status === "opened"
+                      ? "🟢 Opened"
+                      : element.status === "pending"
                       ? "⌛ Pending"
                       : element.status === "in_progress"
                       ? "🔄 In-progress"
-                      : element.status === "fulfilled"
+                      : element.status === "resolved"
                       ? "✅ Resolved"
                       : element.status === "cancelled"
                       ? "❌ Cancelled"
@@ -275,9 +277,10 @@ export function UserServiceRequests() {
                         handleStatusChange(element.id, e);
                       }}
                     >
+                      <option value="opened">🟢 Opened</option>
                       <option value="pending">⌛ Pending</option>
                       <option value="in_progress">🔄 In-progress</option>
-                      <option value="fulfilled">✅ Resolved</option>
+                      <option value="resolved">✅ Resolved</option>
                       <option value="cancelled">❌Cancelled</option>
                     </select>
                   </TableCell>
