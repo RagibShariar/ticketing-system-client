@@ -9,6 +9,7 @@ import { useCurrentToken } from "@/lib/redux/features/authSlice";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import { Edit2Icon, Loader2 } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
@@ -36,10 +37,16 @@ const Profile = () => {
   }
 
   const onSubmit = async (data: FieldValues) => {
-    const userData = {
-      phone: data.phone,
-      designation: data.designation,
-    };
+    const userData = new FormData();
+
+    userData.append("phone", data.phone);
+    userData.append("designation", data.designation);
+
+    // Append image file if it exists
+    if (data.avatar && data.avatar.length > 0) {
+      userData.append("avatar", data.avatar[0]); // Get the first image file
+    }
+
     console.log(userData);
     const toastId = toast.loading("Updating...");
     try {
@@ -63,6 +70,7 @@ const Profile = () => {
     );
   }
 
+  // View Profile
   if (!isEdit) {
     return (
       <>
@@ -74,6 +82,21 @@ const Profile = () => {
             </button>
           </div>
           {/* 1st row */}
+          <div className="mb-12 md:grid md:grid-cols-2 ">
+            <div className=" rounded-full w-[150px] h-[150px]">
+              <Image
+                src={
+                  user?.data?.avatar ||
+                  "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+                }
+                width={200}
+                height={200}
+                className=" w-[150px] h-[150px] object-cover  rounded-full  border-gray-300 border-2"
+                alt="Profile Image"
+              />
+            </div>
+          </div>
+          {/* 2nd row */}
           <div className="mb-12 md:grid md:grid-cols-2 ">
             <div>
               <p className="text-lg ">Full Name</p>
@@ -88,7 +111,7 @@ const Profile = () => {
               </h3>
             </div>
           </div>
-          {/* 2nd row */}
+          {/* 3rd row */}
           <div className="md:grid md:grid-cols-2 ">
             <div>
               <p className="text-lg">Mobile Number</p>
@@ -97,7 +120,7 @@ const Profile = () => {
               </h3>
             </div>
           </div>
-          {/* 3rd row */}
+          {/* 4th row */}
           <div className="md:grid md:grid-cols-2 mt-6">
             <div>
               <p className="text-lg">Company Name</p>
@@ -116,6 +139,8 @@ const Profile = () => {
       </>
     );
   }
+
+  // Edit profile
   return (
     <>
       {/* ------------------------------------------------------------------ */}
@@ -128,6 +153,24 @@ const Profile = () => {
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* 1st row */}
+          <div className="mb-12 md:grid md:grid-cols-2 flex justify-center items-center">
+            <div className=" rounded-full w-[150px] h-[150px]">
+              <Image
+                src={
+                  user?.data?.avatar ||
+                  "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+                }
+                width={100}
+                height={100}
+                alt="Profile Image"
+                className=" w-[150px] h-[150px] object-cover  rounded-full  border-gray-300 border-2"
+              />
+            </div>
+            <div>
+              <input type="file" {...register("avatar")} accept="image/*" />
+            </div>
+          </div>
+          {/* 2nd row */}
           <div className="mb-12 md:grid md:grid-cols-2 ">
             <div>
               <p className="text-lg ">Full Name</p>
@@ -142,7 +185,7 @@ const Profile = () => {
               </h3>
             </div>
           </div>
-          {/* 2nd row */}
+          {/* 3rd row */}
           <div className="md:grid md:grid-cols-2 ">
             <div className="mr-6">
               <p className="text-lg">Mobile Number</p>
@@ -155,7 +198,7 @@ const Profile = () => {
               />
             </div>
           </div>
-          {/* 3rd row */}
+          {/* 4th row */}
           <div className="mb-12 md:grid md:grid-cols-2 mt-8">
             <div>
               <p className="text-lg ">Company Name</p>

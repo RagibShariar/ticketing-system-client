@@ -15,6 +15,7 @@ export type TUserInfo = {
   phone: string;
   companyName: string;
   designation: string;
+  avatar: string;
   role: string;
 };
 

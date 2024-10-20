@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import logo from "@/assets/logo.jpg";
+import { useGetUserInfoQuery } from "@/lib/redux/api/user/userApi";
 import {
   logOut,
   useCurrentToken,
@@ -36,6 +37,7 @@ const Navbar = () => {
   const user = useSelector(useCurrentUser);
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { data: userInfo } = useGetUserInfoQuery("");
 
   const handleLogOut = () => {
     dispatch(logOut());
@@ -60,7 +62,7 @@ const Navbar = () => {
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem className="font-semibold   px-4 py-2 cursor-pointer">
-              <Link href="/service-request">Service Request</Link>
+              <Link href="/service-request">Create Service Request</Link>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
@@ -84,14 +86,17 @@ const Navbar = () => {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <div className="rounded-full cursor-pointer w-12 h-12 bg-white flex items-center justify-center">
-                      {/* <Image
-                        className="rounded-full"
+                      <Image
+                        className="rounded-full  w-12 h-12 object-cover object-top border"
                         width="40"
                         height="40"
-                        src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"
+                        src={
+                          userInfo?.data?.avatar ||
+                          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541"
+                        }
                         alt={user?.name as string}
-                      /> */}
-                      <User size={20} className="text-black" />
+                      />
+                      {/* <User size={20} className="text-black" /> */}
                     </div>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56 ">

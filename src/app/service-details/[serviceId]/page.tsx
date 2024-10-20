@@ -3,7 +3,6 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   useAddAdditionalInformationMutation,
   useViewAdditionalInformationQuery,
@@ -148,14 +147,14 @@ const ServiceDetailsPage = () => {
           {data?.data?.status !== "fulfilled" &&
             data?.data?.status !== "cancelled" && (
               <div className="p-6 border-t border-gray-200">
-                <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                  Add Additional Image
-                </h2>
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  Add Additional Attachment
+                </h3>
                 <form
                   onSubmit={handleSubmit(handleImage)}
                   className="grid w-full  items-center gap-1.5 "
                 >
-                  <Label htmlFor="image">Image</Label>
+                  {/* <Label htmlFor="image">Image</Label> */}
                   <Input
                     {...register("image")}
                     className="grid w-full items-center gap-1.5 shadow-none rounded-none  border-gray-400 "
@@ -196,7 +195,7 @@ const ServiceDetailsPage = () => {
 
           {/* Comments Section */}
           <div className="p-6 border-t border-gray-200">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">
               Additional Information
             </h2>
             <div className="space-y-4">
@@ -237,7 +236,7 @@ const ServiceDetailsPage = () => {
               data?.data?.status !== "cancelled" && (
                 <div className="mt-6">
                   <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                    Add additional information
+                    Add Additional Information
                   </h3>
                   <form onSubmit={handleAddComment}>
                     <textarea
