@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useGenerateVerifyEmailTokenMutation } from "@/lib/redux/api/auth/authApi";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { toast } from "sonner";
@@ -16,7 +17,7 @@ const NotVerified = () => {
         toast.success(res.message);
       }
     } catch (error) {
-      toast.error(error.message || "Something went wrong");
+      toast.error("Something went wrong");
     }
   };
 
