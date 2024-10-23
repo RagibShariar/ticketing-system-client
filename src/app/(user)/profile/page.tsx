@@ -47,11 +47,11 @@ const Profile = () => {
       userData.append("avatar", data.avatar[0]); // Get the first image file
     }
 
-    console.log(userData);
+    // console.log(userData);
     const toastId = toast.loading("Updating...");
     try {
       const res = await updateUser(userData);
-      console.log(res);
+      // console.log(res);
       if (res?.data?.success) {
         toast.success("Updated successfully", { id: toastId });
         setIsEdit(false);
@@ -117,6 +117,12 @@ const Profile = () => {
               <p className="text-lg">Mobile Number</p>
               <h3 className="mt-2 p-3 text-xl font-semibold">
                 {user?.data?.phone || "Not Set"}
+              </h3>
+            </div>
+            <div>
+              <p className="text-lg">Verify Status</p>
+              <h3 className="mt-2 p-3 text-xl font-semibold">
+                {user?.data?.isVerified ? "✅ Verified" : "❌ Not Verified"}
               </h3>
             </div>
           </div>
@@ -196,6 +202,14 @@ const Profile = () => {
                 defaultValue={user?.data?.phone}
                 {...register("phone")}
               />
+            </div>
+            <div>
+              <p className="text-lg">Verify Status</p>
+              <h3 className="mt-2 p-3 text-xl font-semibold">
+                {user?.data.isVerified === true
+                  ? "✅ Verified"
+                  : "❌ Not Verified"}
+              </h3>
             </div>
           </div>
           {/* 4th row */}

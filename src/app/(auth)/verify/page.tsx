@@ -36,7 +36,7 @@ const VerifyOtpPage = () => {
       const res = await verifyLogin(verifyInfo).unwrap();
       const user = jwtDecode(res.token) as TUser;
 
-      console.log(res?.data);
+      // console.log(res?.data);
 
       dispatch(setUser({ user: user, token: res.token, userInfo: res?.data }));
       toast.success("Login Successful", { id: toastId, duration: 2000 });

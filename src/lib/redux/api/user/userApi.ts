@@ -14,6 +14,7 @@ const userApi = baseApi.injectEndpoints({
         url: `/user`,
         method: "GET",
       }),
+      providesTags: ["Auth"],
     }),
     getEmailSuggestions: builder.query({
       query: (email) => `user/suggestions?email=${email}`,

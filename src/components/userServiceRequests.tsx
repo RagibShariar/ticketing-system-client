@@ -28,11 +28,13 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import NotVerified from "./NotVerified";
 
 export function UserServiceRequests() {
   const router = useRouter();
   const token = useAppSelector(useCurrentToken);
   const user = useAppSelector(useCurrentUser);
+  const userInfo = useAppSelector((state) => state.auth.userInfo);
 
   const { data, isLoading } = useViewServicesQuery("");
   const [
@@ -85,6 +87,10 @@ export function UserServiceRequests() {
       toast.error("Failed to update", { id: toastId });
     }
   };
+
+  if (userInfo?.isVerified === false) {
+    return <NotVerified />;
+  }
 
   if (!token || data?.data?.length === 0) {
     return (

@@ -21,7 +21,7 @@ const ForgotPassword = () => {
   const handleForgotPassword = async (e: any) => {
     e.preventDefault();
     const email = e.target.email.value;
-    console.log(email);
+    // console.log(email);
     const toastId = toast.loading("Sending email...");
 
     try {

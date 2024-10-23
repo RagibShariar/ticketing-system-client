@@ -17,6 +17,7 @@ export type TUserInfo = {
   designation: string;
   avatar: string;
   role: string;
+  isVerified: boolean;
 };
 
 type TInitialState = {
@@ -37,9 +38,15 @@ const authSlice = createSlice({
   reducers: {
     setUser: (state, action) => {
       const { user, token, userInfo } = action.payload;
-      state.user = user;
-      state.token = token;
-      state.userInfo = userInfo;
+      if (user !== undefined) {
+        state.user = user;
+      }
+      if (token !== undefined) {
+        state.token = token;
+      }
+      if (userInfo !== undefined) {
+        state.userInfo = userInfo;
+      }
     },
     logOut: (state) => {
       state.user = null;

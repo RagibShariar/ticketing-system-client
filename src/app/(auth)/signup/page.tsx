@@ -48,7 +48,7 @@ const SignUp = () => {
     try {
       // console.log(signUpData)
       const res = await signUp(signUpData).unwrap();
-      console.log(res);
+      // console.log(res);
 
       if (res?.success) {
         toast.success(res?.message, { id: toastId, duration: 1500 });
