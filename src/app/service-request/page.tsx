@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import NotVerified from "@/components/NotVerified";
 import { Button } from "@/components/ui/button";
 // components/ContactForm.js
 import { Input } from "@/components/ui/input";
@@ -44,10 +43,6 @@ const ContactForm = () => {
   const { data: emailSuggestions } = useGetEmailSuggestionsQuery(email, {
     skip: !email,
   });
-
-  if (userInfo?.isVerified === false) {
-    return <NotVerified />;
-  }
 
   const handleEmailChange = (event: { target: { value: any } }) => {
     const email = event.target.value;

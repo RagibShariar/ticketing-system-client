@@ -144,7 +144,7 @@ const ServiceDetailsPage = () => {
           </div>
 
           {/* Additional image upload */}
-          {data?.data?.status !== "fulfilled" &&
+          {data?.data?.status !== "resolved" &&
             data?.data?.status !== "cancelled" && (
               <div className="p-6 border-t border-gray-200">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
@@ -232,7 +232,7 @@ const ServiceDetailsPage = () => {
             </div>
 
             {/* Add a new comment */}
-            {data?.data?.status !== "fulfilled" &&
+            {data?.data?.status !== "resolved" &&
               data?.data?.status !== "cancelled" && (
                 <div className="mt-6">
                   <h3 className="text-xl font-semibold text-gray-800 mb-2">

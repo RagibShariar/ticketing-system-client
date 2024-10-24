@@ -26,7 +26,7 @@ const VerifyEmail = () => {
         if (res?.data?.success) {
           dispatch(setUser({ userInfo: res?.data?.data }));
           toast.success(res?.data?.message);
-          router.push("/");
+          router.push("/login");
         } else {
           toast.error("Verification failed. Try again");
         }
@@ -36,7 +36,7 @@ const VerifyEmail = () => {
     };
 
     verify();
-  }, []);
+  }, [token, dispatch, router, verifyEmail]);
 
   return (
     <div className="h-[85vh] flex flex-col items-center justify-center">
