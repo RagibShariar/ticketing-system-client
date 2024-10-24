@@ -28,10 +28,12 @@ const VerifyEmail = () => {
           toast.success(res?.data?.message);
           router.push("/login");
         } else {
-          toast.error("Verification failed. Try again");
+          toast.error("Invalid token. Please log in again");
+          router.push("/login");
         }
       } catch (error) {
-        toast.error("Verification failed");
+        toast.error("Verification failed. Please try again");
+        router.push("/login");
       }
     };
 
