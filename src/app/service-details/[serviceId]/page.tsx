@@ -2,11 +2,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import BookingAppointment from "@/components/BookingAppointment";
 import { Input } from "@/components/ui/input";
+import UserBookings from "@/components/UserBookings";
 import {
   useAddAdditionalInformationMutation,
   useViewAdditionalInformationQuery,
 } from "@/lib/redux/api/additional-information/additionalInformationApi";
+import { useGetBookingsQuery } from "@/lib/redux/api/booking/bookingApi";
 import {
   useUpdateServiceRequestMutation,
   useViewServiceByIdQuery,
@@ -31,6 +34,11 @@ const ServiceDetailsPage = () => {
   const { data: additionalInformation } =
     useViewAdditionalInformationQuery(serviceId);
   const [updateServiceRequest] = useUpdateServiceRequestMutation();
+  const { data: getBookings } = useGetBookingsQuery(serviceId);
+
+  // const test = getBookings?.data[0]!.endTime;
+  // const test2 = format(test, "HH:mm");
+  console.log(getBookings?.data);
 
   const handleAddComment = async (e: FieldValues) => {
     e.preventDefault();
@@ -256,29 +264,58 @@ const ServiceDetailsPage = () => {
               )}
           </div>
         </div>
-        {/* User Information */}
-        <div className="h-full  p-6 border-t border-gray-200 rounded-lg  lg:col-span-4 bg-white mt-4 lg:mt-0">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-            User Info
-          </h2>
 
-          <div>
+        <div className="h-fit border-t border-gray-200 rounded-lg  lg:col-span-4  mt-4 lg:mt-0 mb-10 flex flex-col gap-6 ">
+          {/* User Information */}
+          <div className="p-6 rounded-lg bg-white">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              User Info
+            </h2>
+
+            <div>
+              <p className="text-gray-700 mb-2">
+                <span className="font-medium">Name:</span>{" "}
+                {data?.data?.user.name}
+              </p>
+              <p className="text-gray-700 mb-2">
+                <span className="font-medium">Email:</span>{" "}
+                {data?.data?.user.email}
+              </p>
+            </div>
             <p className="text-gray-700 mb-2">
-              <span className="font-medium">Name:</span> {data?.data?.user.name}
+              <span className="font-medium">Company:</span>{" "}
+              {data?.data?.user.companyName}
             </p>
             <p className="text-gray-700 mb-2">
-              <span className="font-medium">Email:</span>{" "}
-              {data?.data?.user.email}
+              <span className="font-medium">Designation:</span>{" "}
+              {data?.data?.user.designation}
             </p>
           </div>
-          <p className="text-gray-700 mb-2">
-            <span className="font-medium">Company:</span>{" "}
-            {data?.data?.user.companyName}
-          </p>
-          <p className="text-gray-700 mb-2">
-            <span className="font-medium">Designation:</span>{" "}
-            {data?.data?.user.designation}
-          </p>
+          {/* Booking appointment */}
+          {data?.data?.status !== "resolved" &&
+            data?.data?.status !== "cancelled" && (
+              <div className="p-6 rounded-lg bg-white">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                  Book an Appointment
+                </h2>
+                <div>
+                  <BookingAppointment serviceRequestId={data?.data?.id} />
+                </div>
+              </div>
+            )}
+
+          <div className="p-6 rounded-lg bg-white">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              Show All Appointment
+            </h2>
+            <div>
+              {getBookings?.data?.length === 0 ? (
+                <p>No Appointment Found</p>
+              ) : (
+                <UserBookings bookings={getBookings?.data} />
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

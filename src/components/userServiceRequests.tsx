@@ -131,73 +131,80 @@ export function UserServiceRequests() {
         )}
 
         {user?.role === "admin" && (
-          <div className="flex items-center justify-start p-4">
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="flex space-x-4 items-center"
-            >
-              {/* Filter by Select */}
-              <div>
-                <select
-                  defaultValue="all"
-                  className="p-2 border border-gray-300 rounded-md"
-                  onChange={(e) => setFilterBy(e.target.value)}
-                >
-                  <option value="all">All</option>
-                  <option value="email">Email</option>
-                  <option value="ticketId">Ticket ID</option>
-                </select>
-              </div>
+          <div className="flex items-center justify-between justify-items-center">
+            <div className="flex items-center justify-start p-4">
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="flex space-x-4 items-center"
+              >
+                {/* Filter by Select */}
+                <div>
+                  <select
+                    defaultValue="all"
+                    className="p-2 border border-gray-300 rounded-md"
+                    onChange={(e) => setFilterBy(e.target.value)}
+                  >
+                    <option value="all">All</option>
+                    <option value="email">Email</option>
+                    <option value="ticketId">Ticket ID</option>
+                  </select>
+                </div>
 
-              {/* Email Input - Show only if "email" is selected */}
-              {filterBy === "email" && (
+                {/* Email Input - Show only if "email" is selected */}
+                {filterBy === "email" && (
+                  <div>
+                    <input
+                      type="email"
+                      id="email"
+                      className="block w-full p-2 border border-gray-300 rounded-md"
+                      placeholder="Enter email"
+                      {...register("email", { required: filterBy === "email" })}
+                    />
+                  </div>
+                )}
+
+                {/* Ticket ID Input - Show only if "ticketId" is selected */}
+                {filterBy === "ticketId" && (
+                  <div>
+                    <input
+                      type="text"
+                      id="ticketId"
+                      className="block w-full p-2 border border-gray-300 rounded-md"
+                      placeholder="Enter Ticket ID"
+                      {...register("ticketId", {
+                        required: filterBy === "ticketId",
+                      })}
+                    />
+                  </div>
+                )}
+
+                {/* Days Filter Input */}
                 <div>
                   <input
-                    type="email"
-                    id="email"
+                    type="number"
+                    id="days"
                     className="block w-full p-2 border border-gray-300 rounded-md"
-                    placeholder="Enter email"
-                    {...register("email", { required: filterBy === "email" })}
+                    placeholder="Enter days"
+                    {...register("days")}
                   />
                 </div>
-              )}
 
-              {/* Ticket ID Input - Show only if "ticketId" is selected */}
-              {filterBy === "ticketId" && (
+                {/* Submit Button */}
                 <div>
-                  <input
-                    type="text"
-                    id="ticketId"
-                    className="block w-full p-2 border border-gray-300 rounded-md"
-                    placeholder="Enter Ticket ID"
-                    {...register("ticketId", {
-                      required: filterBy === "ticketId",
-                    })}
-                  />
+                  <button
+                    type="submit"
+                    className="w-full bg-[#041340] text-white px-4 py-2 rounded-md  transition"
+                  >
+                    Search
+                  </button>
                 </div>
-              )}
-
-              {/* Days Filter Input */}
-              <div>
-                <input
-                  type="number"
-                  id="days"
-                  className="block w-full p-2 border border-gray-300 rounded-md"
-                  placeholder="Enter days"
-                  {...register("days")}
-                />
-              </div>
-
-              {/* Submit Button */}
-              <div>
-                <button
-                  type="submit"
-                  className="w-full bg-[#041340] text-white px-4 py-2 rounded-md  transition"
-                >
-                  Search
-                </button>
-              </div>
-            </form>
+              </form>
+            </div>
+            <div>
+              <Link href="/all-appointments" className=" underline">
+                View all Appointments
+              </Link>
+            </div>
           </div>
         )}
 
