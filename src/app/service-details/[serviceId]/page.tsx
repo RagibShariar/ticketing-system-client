@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import AllSpentTimeRows from "@/components/AllSpentTimeRows";
 import BookingAppointment from "@/components/BookingAppointment";
 import { Input } from "@/components/ui/input";
 import UserBookings from "@/components/UserBookings";
@@ -14,8 +15,14 @@ import {
   useUpdateServiceRequestMutation,
   useViewServiceByIdQuery,
 } from "@/lib/redux/api/service-request/serviceRequestApi";
+import {
+  useAddSpentTimeMutation,
+  useGetSpentTimeQuery,
+} from "@/lib/redux/api/spentTime/spentTimeApi";
+import { useAppSelector } from "@/lib/redux/hooks";
 import withAuth from "@/lib/withAuth";
 import { formatDate } from "@/utils/formatDate";
+import { formatDuration } from "@/utils/formatDuration";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -35,10 +42,13 @@ const ServiceDetailsPage = () => {
     useViewAdditionalInformationQuery(serviceId);
   const [updateServiceRequest] = useUpdateServiceRequestMutation();
   const { data: getBookings } = useGetBookingsQuery(serviceId);
+  const [addSpentTime] = useAddSpentTimeMutation();
+  const { data: getSpentTime } = useGetSpentTimeQuery(serviceId);
+  const user = useAppSelector((state) => state.auth.user);
 
   // const test = getBookings?.data[0]!.endTime;
   // const test2 = format(test, "HH:mm");
-  console.log(getBookings?.data);
+  // console.log(getBookings?.data);
 
   const handleAddComment = async (e: FieldValues) => {
     e.preventDefault();
@@ -99,6 +109,53 @@ const ServiceDetailsPage = () => {
     }
   };
 
+  const handleAddTime = (e: any) => {
+    e.preventDefault();
+    const timeString = e.target.timeSpent.value;
+
+    // Check if the string contains valid time units (h, hr, hrs, m, min, minutes)
+    if (!/[h|hr|hrs|m|min|minutes]/i.test(timeString)) {
+      toast.error(
+        "Invalid time format. Please enter time with units like '1h20m' or '45m'."
+      );
+      return;
+    }
+
+    const regex = /(\d+)(h|hr|hrs|m|min|minutes?)/g;
+    let totalMinutes = 0;
+    let match;
+
+    // Iterate over each match and convert to minutes
+    while ((match = regex.exec(timeString)) !== null) {
+      const value = parseInt(match[1]);
+      const unit = match[2];
+
+      if (unit.startsWith("h")) {
+        totalMinutes += value * 60; // Convert hours to minutes
+      } else if (unit.startsWith("m")) {
+        totalMinutes += value; // Minutes remain as they are
+      }
+    }
+
+    try {
+      addSpentTime({ totalMinutes, serviceId });
+      e.target.reset();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log(getSpentTime);
+  const getTotalTime = (time: any) => {
+    const totalTimeSpent = time.reduce(
+      (total: any, item: { timeSpent: any }) => {
+        return total + item.timeSpent;
+      },
+      0
+    );
+    return totalTimeSpent;
+  };
+
   if (isLoading) {
     return (
       <div className="h-[85vh] flex items-center justify-center">
@@ -121,7 +178,16 @@ const ServiceDetailsPage = () => {
               {data?.data.subject}
             </h2>
 
-            <p className="text-sm mt-2">{formatDate(data?.data.createdAt)}</p>
+            <div className="mt-2 flex items-center justify-between ">
+              <p className="text-sm ">{formatDate(data?.data.createdAt)}</p>
+              <p>
+                Total Time Spent:{" "}
+                <span className="font-semibold">
+                  {" "}
+                  {formatDuration(getTotalTime(getSpentTime?.data))}
+                </span>
+              </p>
+            </div>
 
             <p className="mt-4 text-gray-600">{data?.data.message}</p>
 
@@ -291,6 +357,49 @@ const ServiceDetailsPage = () => {
               {data?.data?.user.designation}
             </p>
           </div>
+
+          {/* time spent on this ticket */}
+
+          {data?.data?.status !== "resolved" &&
+            data?.data?.status !== "cancelled" &&
+            user?.role === "admin" && (
+              <div className="p-6 rounded-lg bg-white">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                  Add Time spent on this ticket
+                </h2>
+                <div>
+                  <form onSubmit={handleAddTime} className="flex ">
+                    <input
+                      type="text"
+                      className="w-full px-3 py-2 border  rounded-tl-lg rounded-bl-lg focus:outline-none focus:ring-2  "
+                      name="timeSpent"
+                      placeholder="Enter time (ex: 30m, 125m)"
+                    />
+                    <button className="px-8  bg-gray-800 text-white rounded-tr-lg rounded-br-lg">
+                      Add
+                    </button>
+                  </form>
+                </div>
+              </div>
+            )}
+
+          {/* Show all spent time */}
+          <div className="p-6 rounded-lg bg-white">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              Total Time Spent
+            </h2>
+            <div>
+              {getSpentTime?.data?.length === 0 ? (
+                <p>No time Found</p>
+              ) : (
+                <AllSpentTimeRows
+                  timeSpent={getSpentTime?.data}
+                  totalTime={formatDuration(getTotalTime(getSpentTime?.data))}
+                />
+              )}
+            </div>
+          </div>
+
           {/* Booking appointment */}
           {data?.data?.status !== "resolved" &&
             data?.data?.status !== "cancelled" && (
@@ -304,6 +413,7 @@ const ServiceDetailsPage = () => {
               </div>
             )}
 
+          {/* Show all appointment */}
           <div className="p-6 rounded-lg bg-white">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Show All Appointment

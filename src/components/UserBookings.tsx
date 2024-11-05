@@ -11,7 +11,7 @@ import {
 } from "./ui/table";
 
 const UserBookings = ({ bookings }: { bookings: any }) => {
-  console.log(bookings);
+  // console.log(bookings);
   return (
     <div>
       <Table>
